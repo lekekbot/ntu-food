@@ -3,12 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
 
-from app.database.database import create_db_and_tables
+from app.database.database import Base, engine
 from app.routes import auth, stalls, orders, menu, queue, users
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
+    # Import models to ensure they're registered
+    from app.models import user, stall, menu, order, queue
+    # Create tables
+    Base.metadata.create_all(bind=engine)
     yield
 
 app = FastAPI(

@@ -21,6 +21,3 @@ def get_db():
     finally:
         db.close()
 
-def create_db_and_tables():
-    from app.models import user, stall, menu, order, queue
-    Base.metadata.create_all(bind=engine)

@@ -15,11 +15,11 @@ class QueueEntry(Base):
     __tablename__ = "queue_entries"
 
     id = Column(Integer, primary_key=True, index=True)
-    order_id = Column(Integer, ForeignKey("orders.id"), unique=True, nullable=False)
     stall_id = Column(Integer, ForeignKey("stalls.id"), nullable=False)
-    queue_number = Column(Integer, nullable=False)
-    status = Column(Enum(QueueStatus), default=QueueStatus.WAITING)
+    order_id = Column(Integer, ForeignKey("orders.id"), unique=True, nullable=False)
+    queue_position = Column(Integer, nullable=False)
     estimated_wait_time = Column(Integer)
+    status = Column(Enum(QueueStatus), default=QueueStatus.WAITING)
     joined_at = Column(DateTime, default=datetime.utcnow)
     ready_at = Column(DateTime)
     collected_at = Column(DateTime)
