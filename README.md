@@ -6,9 +6,11 @@ A comprehensive food ordering platform for Nanyang Technological University (NTU
 
 NTU Food is a mobile-first food ordering application designed to streamline the food ordering process at NTU campus stalls. The system helps reduce physical queuing, enables advance ordering, and provides real-time order tracking with smart queue management for students.
 
-## ✅ **Current Status: FULLY FUNCTIONAL API**
+## ✅ **Current Status: COMPLETE FULL-STACK APPLICATION**
 
-The backend API is complete and operational with:
+Both backend API and frontend application are fully functional:
+
+### **Backend (FastAPI):**
 - ✅ **Full Authentication System** with NTU email validation
 - ✅ **Complete Order Management** with automatic queue assignment
 - ✅ **Smart Queue System** with real-time position tracking
@@ -16,16 +18,26 @@ The backend API is complete and operational with:
 - ✅ **20+ API Endpoints** fully tested and working
 - ✅ **JWT Security** with role-based authorization
 
+### **Frontend (React TypeScript):**
+- ✅ **Complete User Interface** with responsive design
+- ✅ **Authentication Pages** with login/register functionality
+- ✅ **Stall Browsing** with real-time status and ratings
+- ✅ **Interactive Menu View** with cart and special requests
+- ✅ **Order Management** with placement and tracking
+- ✅ **Real-time Queue Status** with auto-refresh
+- ✅ **Order History** with status indicators
+- ✅ **Mobile-First Design** with NTU-themed styling
+
 ## 🚀 Features
 
-### For Students (Mobile App)
-- **Browse Stalls & Menus**: View all campus food stalls and their menus
-- **Advance Ordering**: Place orders for specific pickup time slots
-- **Virtual Queue**: Join virtual queues and receive notifications when order is ready
-- **Order Tracking**: Real-time status updates on order preparation
-- **Payment Integration**: Secure payment processing
-- **Order History**: Track past orders and reorder favorites
-- **Ratings & Reviews**: Rate stalls and provide feedback
+### For Students (Web & Mobile App)
+- **Browse Stalls & Menus**: Interactive grid view of all campus food stalls with real-time status
+- **Smart Menu Interface**: Add items to cart with quantity controls and special requests
+- **Advance Ordering**: Place orders for specific pickup time slots with cost calculation
+- **Virtual Queue**: Automatic queue assignment with real-time position tracking
+- **Order Tracking**: Live status updates with estimated ready times and notifications
+- **Order History**: Complete order management with quick reorder functionality
+- **NTU Authentication**: Secure login with NTU email validation and JWT tokens
 
 ### For Stall Owners (Web Dashboard)
 - **Order Management**: Accept, prepare, and complete orders
@@ -46,18 +58,25 @@ The backend API is complete and operational with:
 NTU-Food/
 ├── backend/            # FastAPI backend service
 │   ├── app/
-│   │   ├── main.py
-│   │   ├── models/     # Database models
-│   │   ├── routes/     # API endpoints
-│   │   ├── schemas/    # Pydantic schemas
-│   │   └── database/   # Database configuration
-│   └── requirements.txt
-├── frontend/           # React web dashboard
-│   ├── public/
+│   │   ├── main.py     # FastAPI application entry point
+│   │   ├── models/     # SQLAlchemy database models
+│   │   ├── routes/     # API endpoint definitions
+│   │   ├── schemas/    # Pydantic request/response schemas
+│   │   └── database/   # Database configuration and initialization
+│   ├── requirements.txt
+│   ├── manage_db.py    # Database management utilities
+│   └── test_complete_flow.py  # Comprehensive API testing
+├── frontend/           # React TypeScript web application
+│   ├── public/         # Static assets
 │   ├── src/
-│   └── package.json
-├── mobile/            # React Native mobile app (future)
-└── docs/              # Documentation
+│   │   ├── components/ # React components (Auth, Stalls, Orders, Queue)
+│   │   ├── context/    # Authentication context and state management
+│   │   ├── services/   # API integration and HTTP client
+│   │   ├── App.tsx     # Main application with routing
+│   │   └── main.tsx    # Application entry point
+│   ├── package.json
+│   └── vite.config.ts  # Vite build configuration
+└── docs/               # Project documentation
 ```
 
 ## 🛠️ Tech Stack
@@ -69,17 +88,20 @@ NTU-Food/
 - **API Documentation**: Swagger/OpenAPI
 - **Task Queue**: Celery (for notifications)
 
-### Frontend (Web Dashboard)
-- **Framework**: React 18
-- **State Management**: Redux Toolkit
-- **UI Components**: Material-UI / Ant Design
-- **HTTP Client**: Axios
+### Frontend (Web Application)
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite (fast development and building)
 - **Routing**: React Router v6
+- **HTTP Client**: Axios with interceptors
+- **State Management**: React Context API
+- **Styling**: CSS Modules with responsive design
+- **Authentication**: JWT token management
+- **Real-time Updates**: Polling for queue status
 
-### Mobile (Planned)
-- **Framework**: React Native
+### Mobile (Future Enhancement)
+- **Framework**: React Native (planned)
 - **Navigation**: React Navigation
-- **State Management**: Redux Toolkit
+- **State Management**: Context API
 - **Push Notifications**: Firebase Cloud Messaging
 
 ## 🚦 Getting Started
@@ -128,10 +150,51 @@ npm install
 
 3. Start development server:
 ```bash
-npm start
+npm run dev
 ```
 
-The web application will be available at `http://localhost:3000`
+The web application will be available at `http://localhost:5173`
+
+## 🎯 **Quick Demo**
+
+### **Test Credentials:**
+- **Email:** `test.new.student@e.ntu.edu.sg`
+- **Password:** `testpassword123`
+
+### **Demo Flow:**
+1. Open frontend: http://localhost:5173
+2. Login with test credentials
+3. Browse available stalls (3 test stalls with menus)
+4. Select a stall and add items to cart
+5. Place order and track queue position
+6. View order history and status updates
+
+### **API Documentation:**
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+## 🎨 **Frontend Components**
+
+### **User Interface Features:**
+- **Responsive Design**: Mobile-first approach with desktop optimization
+- **NTU Branding**: Blue and orange color scheme with professional styling
+- **Real-time Updates**: Automatic queue status refresh every 30 seconds
+- **Interactive Elements**: Smooth animations and hover effects
+- **Loading States**: User-friendly loading indicators and error handling
+
+### **Component Structure:**
+- **Authentication**: Login, Register with NTU email validation
+- **StallList**: Grid view of stalls with status indicators and ratings
+- **MenuView**: Interactive menu with cart functionality and special requests
+- **OrderForm**: Complete order placement with pickup time selection
+- **QueueStatus**: Real-time order tracking with position and wait time
+- **OrderList**: Order history with status tracking and quick access
+- **ProtectedRoute**: Route protection with automatic login redirect
+
+### **Navigation Flow:**
+```
+Login/Register → Stall Browse → Menu Selection → Order Placement → Queue Tracking → Order History
+```
 
 ## 📱 API Endpoints
 
