@@ -4,12 +4,12 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from app.database.database import Base, engine
-from app.routes import auth, stalls, orders, menu, queue, users
+from app.routes import auth, auth_otp, stalls, orders, menu, queue, users
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Import models to ensure they're registered
-    from app.models import user, stall, menu, order, queue
+    from app.models import user, stall, menu, order, queue, otp
     # Create tables
     Base.metadata.create_all(bind=engine)
     yield
@@ -43,6 +43,7 @@ async def health_check():
     return {"status": "healthy"}
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
+app.include_router(auth_otp.router, prefix="/api/auth/otp", tags=["OTP Authentication"])
 app.include_router(users.router, prefix="/api/users", tags=["Users"])
 app.include_router(stalls.router, prefix="/api/stalls", tags=["Stalls"])
 app.include_router(menu.router, prefix="/api/menu", tags=["Menu"])
