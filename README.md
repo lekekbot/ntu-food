@@ -11,16 +11,20 @@ NTU Food is a mobile-first food ordering application designed to streamline the 
 Both backend API and frontend application are fully functional:
 
 ### **Backend (FastAPI):**
-- ✅ **Full Authentication System** with NTU email validation
+- ✅ **Full Authentication System** with NTU email validation and 2FA OTP verification
+- ✅ **Professional Email Service** with HTML templates and SMTP integration
+- ✅ **OTP Verification System** with security features (rate limiting, expiry, attempts)
 - ✅ **Complete Order Management** with automatic queue assignment
 - ✅ **Smart Queue System** with real-time position tracking
 - ✅ **Database Models** with proper relationships and validation
-- ✅ **20+ API Endpoints** fully tested and working
+- ✅ **25+ API Endpoints** fully tested and working
 - ✅ **JWT Security** with role-based authorization
 
 ### **Frontend (React TypeScript):**
 - ✅ **Complete User Interface** with responsive design
-- ✅ **Authentication Pages** with login/register functionality
+- ✅ **Advanced Authentication** with 2-step OTP verification and demo mode
+- ✅ **Demo-Friendly Registration** with on-screen OTP display and auto-fill
+- ✅ **Professional UI Components** with Material Design inspiration
 - ✅ **Stall Browsing** with real-time status and ratings
 - ✅ **Interactive Menu View** with cart and special requests
 - ✅ **Order Management** with placement and tracking
@@ -37,7 +41,8 @@ Both backend API and frontend application are fully functional:
 - **Virtual Queue**: Automatic queue assignment with real-time position tracking
 - **Order Tracking**: Live status updates with estimated ready times and notifications
 - **Order History**: Complete order management with quick reorder functionality
-- **NTU Authentication**: Secure login with NTU email validation and JWT tokens
+- **NTU Authentication**: Secure 2-factor authentication with OTP email verification
+- **Demo-Ready Registration**: Professional registration flow with on-screen OTP display
 
 ### For Stall Owners (Web Dashboard)
 - **Order Management**: Accept, prepare, and complete orders
@@ -59,9 +64,11 @@ NTU-Food/
 ├── backend/            # FastAPI backend service
 │   ├── app/
 │   │   ├── main.py     # FastAPI application entry point
-│   │   ├── models/     # SQLAlchemy database models
-│   │   ├── routes/     # API endpoint definitions
-│   │   ├── schemas/    # Pydantic request/response schemas
+│   │   ├── models/     # SQLAlchemy database models (User, OTP, Stall, Order, Queue)
+│   │   ├── routes/     # API endpoint definitions (auth, auth_otp, stalls, orders, queue)
+│   │   ├── schemas/    # Pydantic request/response schemas with OTP validation
+│   │   ├── services/   # Email service with OTP generation and SMTP integration
+│   │   ├── utils/      # NTU email validation and security utilities
 │   │   └── database/   # Database configuration and initialization
 │   ├── requirements.txt
 │   ├── manage_db.py    # Database management utilities
@@ -69,7 +76,7 @@ NTU-Food/
 ├── frontend/           # React TypeScript web application
 │   ├── public/         # Static assets
 │   ├── src/
-│   │   ├── components/ # React components (Auth, Stalls, Orders, Queue)
+│   │   ├── components/ # React components (Auth, RegisterWithOTP, OTPVerification, Stalls, Orders, Queue)
 │   │   ├── context/    # Authentication context and state management
 │   │   ├── services/   # API integration and HTTP client
 │   │   ├── App.tsx     # Main application with routing
@@ -84,7 +91,8 @@ NTU-Food/
 ### Backend
 - **Framework**: FastAPI (Python 3.9+)
 - **Database**: SQLite (development), PostgreSQL (production)
-- **Authentication**: JWT tokens
+- **Authentication**: JWT tokens with 2FA email verification
+- **Email Service**: SMTP with HTML templates and OTP generation
 - **API Documentation**: Swagger/OpenAPI
 - **Task Queue**: Celery (for notifications)
 
@@ -153,17 +161,25 @@ npm install
 npm run dev
 ```
 
-The web application will be available at `http://localhost:5173`
+The web application will be available at `http://localhost:5174`
 
 ## 🎯 **Quick Demo**
 
-### **Test Credentials:**
-- **Email:** `test.new.student@e.ntu.edu.sg`
+### **🧪 Demo Mode - New User Registration:**
+1. Open frontend: http://localhost:5174/register
+2. Fill out the registration form with any NTU email (e.g., `demo@e.ntu.edu.sg`)
+3. Click "Send Verification Code"
+4. **Demo Magic**: OTP is displayed on-screen with a "Copy & Auto-fill" button
+5. Click the button to automatically fill the verification fields
+6. Complete registration and start using the app!
+
+### **🔑 Existing Test Credentials:**
+- **Email:** `test.student@e.ntu.edu.sg`
 - **Password:** `testpassword123`
 
 ### **Demo Flow:**
-1. Open frontend: http://localhost:5173
-2. Login with test credentials
+1. Open frontend: http://localhost:5174
+2. Login with test credentials OR register new account with OTP
 3. Browse available stalls (3 test stalls with menus)
 4. Select a stall and add items to cart
 5. Place order and track queue position
@@ -183,7 +199,9 @@ The web application will be available at `http://localhost:5173`
 - **Loading States**: User-friendly loading indicators and error handling
 
 ### **Component Structure:**
-- **Authentication**: Login, Register with NTU email validation
+- **Authentication**: Login and legacy registration with NTU email validation
+- **RegisterWithOTP**: 2-step registration flow with email verification and demo mode
+- **OTPVerification**: Real-time OTP verification with on-screen display and auto-fill
 - **StallList**: Grid view of stalls with status indicators and ratings
 - **MenuView**: Interactive menu with cart functionality and special requests
 - **OrderForm**: Complete order placement with pickup time selection
@@ -193,16 +211,21 @@ The web application will be available at `http://localhost:5173`
 
 ### **Navigation Flow:**
 ```
-Login/Register → Stall Browse → Menu Selection → Order Placement → Queue Tracking → Order History
+Login/2FA Register → OTP Verification → Stall Browse → Menu Selection → Order Placement → Queue Tracking → Order History
 ```
 
 ## 📱 API Endpoints
 
 ### Authentication
-- `POST /api/auth/register` - Student registration with NTU email validation
+- `POST /api/auth/register` - Legacy registration (deprecated)
 - `POST /api/auth/login` - User login with JWT token generation
 - `GET /api/auth/me` - Get current user profile
-- `POST /api/auth/refresh` - Refresh JWT token
+
+### OTP Authentication (2FA)
+- `POST /api/auth/otp/register` - Send OTP to NTU email for registration
+- `POST /api/auth/otp/verify-otp` - Verify OTP and complete registration
+- `POST /api/auth/otp/resend-otp` - Resend OTP with rate limiting
+- `DELETE /api/auth/otp/cancel-registration/{email}` - Cancel pending registration
 
 ### Stalls
 - `GET /api/stalls/` - List all stalls with location and operating hours
@@ -233,7 +256,9 @@ Login/Register → Stall Browse → Menu Selection → Order Placement → Queue
 
 ### Core Tables
 - **users** - Student and stall owner accounts with NTU email validation
-  - NTU email (@e.ntu.edu.sg), student ID, role-based access
+  - NTU email (@e.ntu.edu.sg/@ntu.edu.sg), student ID, role-based access, email verification status
+- **otp_verifications** - Temporary OTP storage for email verification
+  - Email, OTP code, user registration data, expiry, attempts tracking
 - **stalls** - Food stall information with operating hours and location
   - Name, location, operating hours, average prep time, owner relationship
 - **menu_items** - Menu items for each stall with availability tracking
@@ -248,14 +273,26 @@ Login/Register → Stall Browse → Menu Selection → Order Placement → Queue
 
 ## 🔒 Security
 
-- JWT-based authentication with role-based authorization
-- Password hashing with bcrypt for secure storage
-- NTU email validation (@e.ntu.edu.sg domain restriction)
-- Pydantic input validation and sanitization
-- CORS middleware configured for frontend integration
-- Role-based access control (Student, Stall Owner, Admin)
-- Protected endpoints with user authorization checks
-- Environment variables for sensitive configuration
+### Authentication & Authorization
+- **2-Factor Authentication** with email-based OTP verification
+- **JWT-based authentication** with role-based authorization
+- **Password hashing** with bcrypt for secure storage
+- **NTU email validation** (@e.ntu.edu.sg/@ntu.edu.sg domain restriction)
+- **Role-based access control** (Student, Stall Owner, Admin)
+
+### OTP Security Features
+- **Secure OTP generation** with 6-digit random codes
+- **Time-based expiry** (10 minutes) for OTP codes
+- **Rate limiting** (1 minute between requests) to prevent spam
+- **Attempt limiting** (maximum 5 failed attempts)
+- **Temporary storage** with automatic cleanup of expired OTPs
+
+### General Security
+- **Input validation** with Pydantic schemas and custom validators
+- **CORS middleware** configured for frontend integration
+- **Protected endpoints** with user authorization checks
+- **Environment variables** for sensitive configuration
+- **Professional email templates** to prevent phishing concerns
 
 ## 🧪 Testing
 
@@ -266,11 +303,12 @@ python test_complete_flow.py
 ```
 
 This comprehensive test script validates the complete order flow:
-- Student registration and authentication
-- Stall browsing and menu viewing
-- Order creation with automatic queue assignment
-- Queue position tracking and updates
-- Order history and details retrieval
+- **2FA Registration**: OTP-based account creation with email verification
+- **Student Authentication**: Login with NTU email validation
+- **Stall Management**: Browsing and menu viewing functionality
+- **Order Processing**: Order creation with automatic queue assignment
+- **Queue Tracking**: Real-time position tracking and status updates
+- **Order History**: Complete order lifecycle and details retrieval
 
 ### Unit Tests (Future)
 ```bash
