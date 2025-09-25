@@ -9,6 +9,12 @@ import MenuView from './components/MenuView';
 import OrderForm from './components/OrderForm';
 import QueueStatus from './components/QueueStatus';
 import OrderList from './components/OrderList';
+import AdminLogin from './components/admin/AdminLogin';
+import AdminDashboard from './components/admin/AdminDashboard';
+import UserManagement from './components/admin/UserManagement';
+import StallManagement from './components/admin/StallManagement';
+import MenuManagement from './components/admin/MenuManagement';
+import OrderManagement from './components/admin/OrderManagement';
 import './App.css';
 
 function App() {
@@ -20,6 +26,14 @@ function App() {
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterWithOTP />} />
+
+            {/* Admin routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/users" element={<UserManagement />} />
+            <Route path="/admin/stalls" element={<StallManagement />} />
+            <Route path="/admin/menu" element={<MenuManagement />} />
+            <Route path="/admin/orders" element={<OrderManagement />} />
 
             {/* Protected routes */}
             <Route path="/stalls" element={

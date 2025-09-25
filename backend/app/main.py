@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 import uvicorn
 
 from app.database.database import Base, engine
-from app.routes import auth, auth_otp, stalls, orders, menu, queue, users
+from app.routes import auth, auth_otp, stalls, orders, menu, queue, users, admin
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -49,6 +49,7 @@ app.include_router(stalls.router, prefix="/api/stalls", tags=["Stalls"])
 app.include_router(menu.router, prefix="/api/menu", tags=["Menu"])
 app.include_router(orders.router, prefix="/api/orders", tags=["Orders"])
 app.include_router(queue.router, prefix="/api/queue", tags=["Queue"])
+app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 
 if __name__ == "__main__":
     uvicorn.run(
