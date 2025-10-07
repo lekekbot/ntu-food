@@ -37,7 +37,7 @@ Both backend API and frontend application are fully functional:
 ## 🚀 Features
 
 ### For Students (Web & Mobile App)
-- **Browse Stalls & Menus**: Interactive grid view of all campus food stalls with real-time status
+- **Browse Stalls & Menus**: Interactive grid view of all campus food stalls with real-time status and descriptions
 - **Smart Menu Interface**: Add items to cart with quantity controls and special requests
 - **Advance Ordering**: Place orders for specific pickup time slots with cost calculation
 - **Virtual Queue**: Automatic queue assignment with real-time position tracking
@@ -45,6 +45,7 @@ Both backend API and frontend application are fully functional:
 - **Order History**: Complete order management with quick reorder functionality
 - **NTU Authentication**: Secure 2-factor authentication with OTP email verification
 - **Demo-Ready Registration**: Professional registration flow with on-screen OTP display
+- **Stall Details**: View stall descriptions, cuisine types, operating hours, and ratings
 
 ### For Stall Owners (Web Dashboard)
 - **Order Management**: Accept, prepare, and complete orders
@@ -242,7 +243,7 @@ python seed_admin.py
 - **Authentication**: Login and legacy registration with NTU email validation
 - **RegisterWithOTP**: 2-step registration flow with email verification and demo mode
 - **OTPVerification**: Real-time OTP verification with on-screen display and auto-fill
-- **StallList**: Grid view of stalls with status indicators and ratings
+- **StallList**: Grid view of stalls with descriptions, status indicators, operating hours, and ratings
 - **MenuView**: Interactive menu with cart functionality and special requests
 - **OrderForm**: Complete order placement with pickup time selection
 - **QueueStatus**: Real-time order tracking with position and wait time

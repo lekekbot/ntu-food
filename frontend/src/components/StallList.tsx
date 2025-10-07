@@ -96,6 +96,10 @@ const StallList = () => {
                   <p className="stall-location">📍 {stall.location}</p>
                   <p className="stall-cuisine">{stall.cuisine_type || 'Various'}</p>
 
+                  {stall.description && (
+                    <p className="stall-description">{stall.description}</p>
+                  )}
+
                   <div className="stall-details">
                     <div className="stall-rating">
                       ⭐ {stall.rating?.toFixed(1) || 'New'}
