@@ -81,6 +81,8 @@ NTU-Food/
 │   ├── requirements.txt
 │   ├── manage_db.py    # Database management utilities
 │   ├── seed_admin.py   # Admin account creation script
+│   ├── seed_stalls.py  # Seed 3 realistic NTU food stalls with menus
+│   ├── seed_test_users.py  # Seed 3 test student accounts for development
 │   └── test_complete_flow.py  # Comprehensive API testing
 ├── frontend/           # React TypeScript web application
 │   ├── public/         # Static assets
@@ -91,7 +93,10 @@ NTU-Food/
 │   │   ├── context/    # Authentication context and state management
 │   │   ├── services/   # API integration (student & admin API clients)
 │   │   ├── App.tsx     # Main application with routing
+│   │   ├── index.css   # Tailwind CSS directives and global styles
 │   │   └── main.tsx    # Application entry point
+│   ├── tailwind.config.js  # Tailwind CSS configuration with NTU color palette
+│   ├── postcss.config.js   # PostCSS configuration for Tailwind
 │   ├── package.json
 │   └── vite.config.ts  # Vite build configuration
 ├── ADMIN_PANEL_GUIDE.md       # Comprehensive admin panel documentation
@@ -116,9 +121,10 @@ NTU-Food/
 - **Routing**: React Router v6
 - **HTTP Client**: Axios with interceptors
 - **State Management**: React Context API
-- **Styling**: CSS Modules with responsive design
+- **Styling**: Tailwind CSS v3.4 with PostCSS (utility-first CSS framework)
 - **Authentication**: JWT token management
 - **Real-time Updates**: Polling for queue status
+- **Responsive Design**: Mobile-first approach with custom breakpoints
 
 ### Mobile (Future Enhancement)
 - **Framework**: React Native (planned)
@@ -179,13 +185,30 @@ The web application will be available at `http://localhost:5174`
 
 ## 🎯 **Quick Demo**
 
-### **🔐 Admin Panel Demo - 🆕 NEW!**
+### **🍽️ Database Seeding - Get Started Quickly!**
 
-**Setup Admin Account:**
+**Populate with realistic test data:**
 ```bash
 cd backend
+
+# Create admin account
 python seed_admin.py
+
+# Add 3 realistic NTU food stalls with 16 menu items
+python seed_stalls.py
+
+# Add 3 test student accounts
+python seed_test_users.py
 ```
+
+**Test Data Includes:**
+- **Stalls**: Western Food, Chicken Rice, Mala Xiang Guo
+- **Menu Items**: 16 realistic dishes ($3.50 - $10.00)
+- **Test Students**: test.student@e.ntu.edu.sg, john.tan@e.ntu.edu.sg, alice.lim@e.ntu.edu.sg
+
+---
+
+### **🔐 Admin Panel Demo - 🆕 NEW!**
 
 **Admin Credentials:**
 - **Email:** `admin@ntu.edu.sg`
@@ -193,11 +216,11 @@ python seed_admin.py
 - **URL:** http://localhost:5173/admin/login
 
 **Quick Test (5 minutes):**
-1. Login to admin panel
-2. Go to "Stalls" → Create new stall "Test Stall"
-3. Go to "Menu Items" → Add item "Test Burger - $8.50"
-4. Open student app → See stall and menu immediately!
-5. Change price to $9.00 in admin → Student sees new price instantly!
+1. Run seeding scripts above to populate database
+2. Login to admin panel
+3. Go to "Stalls" → Edit existing stalls or create new ones
+4. Go to "Menu Items" → Update prices and availability
+5. Open student app → See all changes immediately!
 6. Restart servers → All changes persist in database!
 
 **📖 Full Guide:** See [QUICK_START.md](QUICK_START.md) and [ADMIN_PANEL_GUIDE.md](ADMIN_PANEL_GUIDE.md)
@@ -214,17 +237,19 @@ python seed_admin.py
 5. Click the button to automatically fill the verification fields
 6. Complete registration and start using the app!
 
-**🔑 Existing Test Credentials:**
-- **Email:** `test.student@e.ntu.edu.sg`
-- **Password:** `testpassword123`
+**🔑 Test Student Accounts (run seed_test_users.py first):**
+- **Email:** `test.student@e.ntu.edu.sg` | **Password:** `TestPassword123`
+- **Email:** `john.tan@e.ntu.edu.sg` | **Password:** `Password123`
+- **Email:** `alice.lim@e.ntu.edu.sg` | **Password:** `Password123`
 
 **Demo Flow:**
-1. Open frontend: http://localhost:5173
-2. Login with test credentials OR register new account with OTP
-3. Browse available stalls (3 test stalls with menus)
-4. Select a stall and add items to cart
-5. Place order and track queue position
-6. View order history and status updates
+1. Run `python seed_stalls.py` to populate realistic stall data
+2. Open frontend: http://localhost:5173
+3. Login with test credentials OR register new account with OTP
+4. Browse available stalls (Western Food, Chicken Rice, Mala Xiang Guo)
+5. Select a stall and add items to cart
+6. Place order and track queue position
+7. View order history and status updates
 
 **API Documentation:**
 - **Swagger UI**: http://localhost:8000/docs
@@ -233,15 +258,18 @@ python seed_admin.py
 ## 🎨 **Frontend Components**
 
 ### **User Interface Features:**
-- **Responsive Design**: Mobile-first approach with desktop optimization
-- **NTU Branding**: Blue and orange color scheme with professional styling
+- **Modern Styling**: Tailwind CSS v3.4 utility-first approach with custom NTU color palette
+- **Responsive Design**: Mobile-first with breakpoints (480px, 768px, 1024px)
+- **NTU Branding**: Blue and orange gradient backgrounds with professional styling
 - **Real-time Updates**: Automatic queue status refresh every 30 seconds
-- **Interactive Elements**: Smooth animations and hover effects
+- **Interactive Elements**: Smooth animations, hover effects, and focus states
 - **Loading States**: User-friendly loading indicators and error handling
+- **Zero CSS Files**: All authentication pages converted to Tailwind utilities
+- **Consistent Design**: Gradient buttons, rounded inputs, shadow effects throughout
 
 ### **Student App Components:**
-- **Authentication**: Login and legacy registration with NTU email validation
-- **RegisterWithOTP**: 2-step registration flow with email verification and demo mode
+- **Login**: Student login page (Tailwind CSS - converted) with split-screen design
+- **RegisterWithOTP**: 2-step registration flow (Tailwind CSS - converted) with email verification and demo mode
 - **OTPVerification**: Real-time OTP verification with on-screen display and auto-fill
 - **StallList**: Grid view of stalls with descriptions, status indicators, operating hours, and ratings
 - **MenuView**: Interactive menu with cart functionality and special requests
@@ -251,8 +279,9 @@ python seed_admin.py
 - **ProtectedRoute**: Route protection with automatic login redirect
 
 ### **Admin Dashboard Components:**
-- **AdminLogin**: Secure admin authentication with role validation
+- **AdminLogin**: Secure admin authentication (Tailwind CSS - converted) with role validation
 - **AdminDashboard**: Analytics overview with real-time statistics
+- **AllAccounts**: Comprehensive user viewer with search, filter, export, and test credentials
 - **UserManagement**: Full CRUD for users with filters and role management
 - **StallManagement**: Create, edit, delete stalls with database persistence
 - **MenuManagement**: Add, edit, delete menu items with price updates
@@ -448,15 +477,17 @@ Project Link: [https://github.com/ajiteshmanoj/ntu-food](https://github.com/ajit
 ### ✅ Complete Full-Stack Implementation
 - **20+ Database Tables** with proper relationships and constraints
 - **40+ REST API Endpoints** with full documentation
-- **17+ React Components** with TypeScript type safety
+- **18+ React Components** with TypeScript type safety (critical auth pages in Tailwind CSS)
 - **3 User Roles** (Student, Stall Owner, Admin) with distinct interfaces
+- **Database Seeding Scripts** for quick setup with realistic test data
 
 ### ✅ Production Features
 - **2-Factor Authentication** with email OTP verification
 - **Real-time Queue System** with position tracking and ETA
 - **Admin Dashboard** with full CRUD and analytics
 - **Database Persistence** - all changes sync across the app
-- **Mobile-First Design** with responsive layouts
+- **Modern UI Framework** - Tailwind CSS v3.4 with utility-first approach
+- **Mobile-First Design** with responsive layouts and custom breakpoints
 - **Security Best Practices** - JWT, bcrypt, input validation
 
 ### ✅ Developer Experience
