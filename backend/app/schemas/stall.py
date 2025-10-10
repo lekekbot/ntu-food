@@ -32,7 +32,7 @@ class StallResponse(StallBase):
     id: int
     is_open: bool
     rating: float
-    owner_id: int
+    owner_id: Optional[int] = None
 
     class Config:
         from_attributes = True

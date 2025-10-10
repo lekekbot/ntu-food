@@ -12,6 +12,7 @@ import OrderList from './components/OrderList';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
 import UserManagement from './components/admin/UserManagement';
+import AllAccounts from './components/admin/AllAccounts';
 import StallManagement from './components/admin/StallManagement';
 import MenuManagement from './components/admin/MenuManagement';
 import OrderManagement from './components/admin/OrderManagement';
@@ -31,6 +32,7 @@ function App() {
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/users" element={<UserManagement />} />
+            <Route path="/admin/accounts" element={<AllAccounts />} />
             <Route path="/admin/stalls" element={<StallManagement />} />
             <Route path="/admin/menu" element={<MenuManagement />} />
             <Route path="/admin/orders" element={<OrderManagement />} />

@@ -80,10 +80,16 @@ const AdminDashboard: React.FC = () => {
             📊 Overview
           </button>
           <button
+            className={activeTab === 'accounts' ? 'active' : ''}
+            onClick={() => navigate('/admin/accounts')}
+          >
+            👤 All Accounts
+          </button>
+          <button
             className={activeTab === 'users' ? 'active' : ''}
             onClick={() => navigate('/admin/users')}
           >
-            👥 Users
+            👥 User Management
           </button>
           <button
             className={activeTab === 'stalls' ? 'active' : ''}
