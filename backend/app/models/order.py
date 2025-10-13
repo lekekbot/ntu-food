@@ -19,7 +19,7 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     stall_id = Column(Integer, ForeignKey("stalls.id"), nullable=False)
     total_amount = Column(Float, nullable=False)
-    status = Column(Enum(OrderStatus), default=OrderStatus.PENDING)
+    status = Column(Enum(OrderStatus, name='order_status', values_callable=lambda x: [e.value for e in x]), default=OrderStatus.PENDING)
     queue_number = Column(Integer)
     pickup_time = Column(DateTime)
     order_number = Column(String)

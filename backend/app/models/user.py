@@ -19,7 +19,7 @@ class User(Base):
     phone = Column(String, nullable=False)
     dietary_preferences = Column(Text)
     hashed_password = Column(String, nullable=False)
-    role = Column(Enum(UserRole), default=UserRole.STUDENT)
+    role = Column(Enum(UserRole, name='user_role', values_callable=lambda x: [e.value for e in x]), default=UserRole.STUDENT)
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)

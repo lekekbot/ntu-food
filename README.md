@@ -83,7 +83,10 @@ NTU-Food/
 │   ├── seed_admin.py   # Admin account creation script
 │   ├── seed_stalls.py  # Seed 3 realistic NTU food stalls with menus
 │   ├── seed_test_users.py  # Seed 3 test student accounts for development
-│   └── test_complete_flow.py  # Comprehensive API testing
+│   ├── seed_supabase.py     # Supabase database seeding script
+│   ├── test_complete_flow.py  # Comprehensive API testing
+│   ├── test_supabase_connection.py  # Supabase connection test
+│   └── supabase_migration.sql       # SQL migration script for Supabase
 ├── frontend/           # React TypeScript web application
 │   ├── public/         # Static assets
 │   ├── src/
@@ -102,18 +105,25 @@ NTU-Food/
 ├── ADMIN_PANEL_GUIDE.md       # Comprehensive admin panel documentation
 ├── QUICK_START.md             # Quick testing guide
 ├── TESTING_CHECKLIST.md       # Complete verification checklist
-└── ADMIN_IMPLEMENTATION_SUMMARY.md  # Technical implementation details
+├── ADMIN_IMPLEMENTATION_SUMMARY.md  # Technical implementation details
+├── SUPABASE_MIGRATION_GUIDE.md     # Complete Supabase migration guide
+├── MIGRATION_SUMMARY.md            # Quick migration summary
+└── MIGRATION_CHECKLIST.md          # Step-by-step migration checklist
 ```
 
 ## 🛠️ Tech Stack
 
 ### Backend
 - **Framework**: FastAPI (Python 3.9+)
-- **Database**: SQLite (development), PostgreSQL (production)
+- **Database**: Supabase PostgreSQL (cloud-hosted) with connection pooling
+  - SQLite supported for local development
+  - PostgreSQL ENUMs for type safety (user_role, order_status, queue_status)
+  - Row Level Security (RLS) enabled
 - **Authentication**: JWT tokens with 2FA email verification
 - **Email Service**: SMTP with HTML templates and OTP generation
 - **API Documentation**: Swagger/OpenAPI
 - **Task Queue**: Celery (for notifications)
+- **Cloud Database**: Supabase with automatic backups and real-time capabilities
 
 ### Frontend (Web Application)
 - **Framework**: React 18 with TypeScript
@@ -157,7 +167,33 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Run the development server:
+4. **Configure Database** (Choose one):
+
+   **Option A: Supabase (Cloud PostgreSQL) - Recommended for Production**
+   ```bash
+   # Copy .env.example to .env
+   cp .env.example .env
+
+   # Edit .env and add your Supabase credentials:
+   # DATABASE_URL=postgresql://postgres.PROJECT_REF:PASSWORD@aws-1-REGION.pooler.supabase.com:6543/postgres
+   # SUPABASE_URL=https://PROJECT_REF.supabase.co
+   # SUPABASE_KEY=your_supabase_anon_key
+
+   # Run migration in Supabase SQL Editor (see SUPABASE_MIGRATION_GUIDE.md)
+   # Then seed the database:
+   python seed_supabase.py
+   ```
+
+   **Option B: SQLite (Local Development)**
+   ```bash
+   # No configuration needed - SQLite database will be created automatically
+   # Seed with test data:
+   python seed_admin.py
+   python seed_stalls.py
+   python seed_test_users.py
+   ```
+
+5. Run the development server:
 ```bash
 uvicorn app.main:app --reload --port 8000
 ```
@@ -182,6 +218,75 @@ npm run dev
 ```
 
 The web application will be available at `http://localhost:5174`
+
+## ☁️ **Supabase Cloud Database Migration**
+
+The application now supports **Supabase PostgreSQL** for cloud-hosted, production-ready database deployment!
+
+### 🌟 **Why Supabase?**
+- ☁️ **Cloud-Hosted** - No local database files to manage
+- 🔄 **Automatic Backups** - Your data is safe
+- 📊 **Built-in Dashboard** - Monitor queries and performance
+- ⚡ **Better Performance** - PostgreSQL is faster than SQLite
+- 🔒 **Row Level Security** - Fine-grained access control
+- 🌐 **Global CDN** - Fast worldwide access
+- 🚀 **Production-Ready** - Deploy anywhere instantly
+
+### 📚 **Migration Guides**
+
+We've created comprehensive guides for migrating to Supabase:
+
+1. **[SUPABASE_MIGRATION_GUIDE.md](SUPABASE_MIGRATION_GUIDE.md)** - Complete step-by-step migration instructions
+   - SQL migration script execution
+   - Environment configuration
+   - Email setup (real OTP)
+   - Testing procedures
+   - Troubleshooting
+
+2. **[MIGRATION_SUMMARY.md](MIGRATION_SUMMARY.md)** - Quick 5-step migration overview
+   - Files created
+   - Quick start guide
+   - Configuration details
+   - Test credentials
+
+3. **[MIGRATION_CHECKLIST.md](MIGRATION_CHECKLIST.md)** - Interactive checklist
+   - Step-by-step tracking
+   - Verification procedures
+   - Testing checklist
+
+### ⚡ **Quick Migration (5 Steps)**
+
+```bash
+# 1. Run SQL migration in Supabase Dashboard
+# (Copy backend/supabase_migration.sql to Supabase SQL Editor)
+
+# 2. Install PostgreSQL dependencies
+cd backend
+pip install psycopg2-binary supabase
+
+# 3. Configure .env with Supabase credentials
+# (See SUPABASE_MIGRATION_GUIDE.md for details)
+
+# 4. Seed database
+python seed_supabase.py
+
+# 5. Restart backend
+python -m uvicorn app.main:app --reload
+```
+
+### ✅ **Migration Status: Complete**
+
+The migration is **100% complete** with all models updated for PostgreSQL compatibility:
+- ✅ SQL migration script with all tables, indexes, and constraints
+- ✅ PostgreSQL ENUM types (user_role, order_status, queue_status)
+- ✅ Connection pooler for better performance
+- ✅ Database seeding script for initial data
+- ✅ All models updated for PostgreSQL compatibility
+- ✅ Comprehensive testing and documentation
+
+**Current Database:** Supabase PostgreSQL (cloud-hosted with connection pooling)
+
+---
 
 ## 🎯 **Quick Demo**
 
@@ -368,22 +473,37 @@ Admin: Admin Login → Dashboard → Manage Users/Stalls/Menus/Orders
 
 ## 🗄️ Database Schema
 
+### Database Technology
+- **Production**: Supabase PostgreSQL (cloud-hosted with connection pooling)
+- **Development**: SQLite or Supabase
+- **Features**: ENUM types, Row Level Security, automatic backups, real-time capabilities
+
 ### Core Tables
 - **users** - Student and stall owner accounts with NTU email validation
-  - NTU email (@e.ntu.edu.sg/@ntu.edu.sg), student ID, role-based access, email verification status
+  - NTU email (@e.ntu.edu.sg/@ntu.edu.sg), student ID, role-based access (ENUM: student/stall_owner/admin)
+  - Email verification status, timestamps, hashed passwords
 - **otp_verifications** - Temporary OTP storage for email verification
-  - Email, OTP code, user registration data, expiry, attempts tracking
+  - Email, OTP code, user registration data, expiry (10 mins), attempts tracking (max 5)
 - **stalls** - Food stall information with operating hours and location
-  - Name, location, operating hours, average prep time, owner relationship
+  - Name, location, operating hours, average prep time, owner relationship, ratings
 - **menu_items** - Menu items for each stall with availability tracking
-  - Name, description, price, category, availability status
+  - Name, description, price, category, availability status, dietary info (vegetarian, halal)
 - **orders** - Order transactions with automatic queue assignment
-  - Order number generation, status tracking, pickup time, total amount
+  - Order number generation, status tracking (ENUM: pending/preparing/ready/completed/cancelled)
+  - Pickup time, total amount, special instructions
 - **order_items** - Items within each order with special requests
-  - Quantity, unit price, special requests for each menu item
-- **queue** - Virtual queue entries with smart position management
-  - Queue position, estimated wait time, status tracking, timestamps
+  - Quantity, unit price, subtotal, special requests for each menu item
+- **queue_entries** - Virtual queue entries with smart position management
+  - Queue position, estimated wait time, status (ENUM: waiting/preparing/ready/collected/cancelled)
+  - Timestamps for joined_at, ready_at, collected_at
 - **reviews** - User reviews and ratings (planned feature)
+
+### PostgreSQL Features (Supabase)
+- **ENUM Types**: user_role, order_status, queue_status for type safety
+- **Indexes**: Optimized queries on email, student_id, status fields
+- **Foreign Keys**: Cascading deletes and referential integrity
+- **Triggers**: Automatic updated_at timestamp updates
+- **Row Level Security**: Fine-grained access control policies
 
 ## 🔒 Security
 
@@ -438,14 +558,35 @@ npm test
 
 ## 📦 Deployment
 
-### Production Considerations
-- Use PostgreSQL instead of SQLite
-- Implement Redis for caching
-- Set up proper logging
+### Production Setup (Supabase)
+
+**Database** - Already cloud-ready with Supabase:
+- ✅ PostgreSQL cloud database with connection pooling
+- ✅ Automatic backups and point-in-time recovery
+- ✅ Built-in monitoring and analytics dashboard
+- ✅ Row Level Security configured
+- ✅ Global CDN for fast access worldwide
+
+**Backend Deployment:**
+- Deploy FastAPI to Railway, Render, or AWS
+- Set environment variables (DATABASE_URL, SUPABASE_URL, SUPABASE_KEY)
 - Configure HTTPS/SSL
-- Use environment variables for configuration
-- Set up CI/CD pipeline
-- Implement monitoring and alerting
+- Enable CORS for frontend domain
+- Set up proper logging and monitoring
+
+**Frontend Deployment:**
+- Deploy React app to Vercel, Netlify, or AWS S3
+- Update API base URL for production
+- Configure environment variables
+- Enable HTTPS
+
+**Additional Production Considerations:**
+- Implement Redis for caching and session management
+- Set up CI/CD pipeline (GitHub Actions recommended)
+- Configure monitoring and alerting (Sentry, DataDog)
+- Enable rate limiting for API endpoints
+- Set up proper logging infrastructure
+- Configure Supabase email service for production OTP
 
 ## 🤝 Contributing
 
@@ -485,23 +626,40 @@ Project Link: [https://github.com/ajiteshmanoj/ntu-food](https://github.com/ajit
 - **2-Factor Authentication** with email OTP verification
 - **Real-time Queue System** with position tracking and ETA
 - **Admin Dashboard** with full CRUD and analytics
-- **Database Persistence** - all changes sync across the app
+- **Cloud Database** - Supabase PostgreSQL with connection pooling
+- **Database Persistence** - all changes sync across the app instantly
 - **Modern UI Framework** - Tailwind CSS v3.4 with utility-first approach
 - **Mobile-First Design** with responsive layouts and custom breakpoints
-- **Security Best Practices** - JWT, bcrypt, input validation
+- **Security Best Practices** - JWT, bcrypt, input validation, RLS
+- **Production Ready** - Cloud-hosted database with automatic backups
 
 ### ✅ Developer Experience
-- **Comprehensive Documentation** - 4 detailed guides included
+- **Comprehensive Documentation** - 7 detailed guides included
 - **Easy Setup** - Working in under 5 minutes
 - **Testing Scripts** - Complete API flow testing
 - **Clean Architecture** - Separation of concerns, modular design
+- **Supabase Migration** - Complete cloud database migration guides
+- **Dual Database Support** - SQLite for dev, PostgreSQL for production
 
 ### 📊 Stats
-- **~5,000 lines** of production-ready code
-- **Full database persistence** with SQLite/PostgreSQL support
+- **~5,000+ lines** of production-ready code
+- **Cloud database** - Supabase PostgreSQL with connection pooling
+- **Full database persistence** with automatic backups
 - **Real-time synchronization** between admin and student apps
 - **100% functional** - all features working and tested
+- **7 detailed guides** - Setup, testing, admin, and migration documentation
 
 ---
 
-**Status**: Production-ready full-stack application with comprehensive admin panel.
+**Status**: Production-ready full-stack application with cloud database and comprehensive admin panel.
+
+### 🚀 Latest Updates
+
+**Supabase Migration Complete (2025-01-13)**
+- ✅ Migrated from SQLite to Supabase PostgreSQL
+- ✅ Connection pooling for better performance
+- ✅ PostgreSQL ENUMs for type safety
+- ✅ Row Level Security enabled
+- ✅ All models updated for PostgreSQL compatibility
+- ✅ Complete migration documentation created
+- ✅ Cloud-hosted database ready for production

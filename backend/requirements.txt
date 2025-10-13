@@ -7,7 +7,11 @@ pydantic-settings
 
 # Database
 sqlalchemy
-aiosqlite
+aiosqlite  # For SQLite (local development)
+psycopg2-binary  # For PostgreSQL/Supabase (production)
+
+# Supabase (optional, for Supabase Auth integration)
+supabase
 
 # Authentication & Security
 python-jose[cryptography]

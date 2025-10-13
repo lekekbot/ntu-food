@@ -19,7 +19,7 @@ class QueueEntry(Base):
     order_id = Column(Integer, ForeignKey("orders.id"), unique=True, nullable=False)
     queue_position = Column(Integer, nullable=False)
     estimated_wait_time = Column(Integer)
-    status = Column(Enum(QueueStatus), default=QueueStatus.WAITING)
+    status = Column(Enum(QueueStatus, name='queue_status', values_callable=lambda x: [e.value for e in x]), default=QueueStatus.WAITING)
     joined_at = Column(DateTime, default=datetime.utcnow)
     ready_at = Column(DateTime)
     collected_at = Column(DateTime)
