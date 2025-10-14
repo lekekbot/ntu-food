@@ -27,12 +27,22 @@ const RegisterWithOTP = () => {
   const [copySuccess, setCopySuccess] = useState(false);
 
   // Validation functions
+  // TEMPORARY: Accept any valid email (NTU email servers block unknown senders)
+  // TO REVERT: Uncomment the NTU domain check when NTU IT whitelists the sender
   const validateEmail = (email) => {
-    const emailLower = email.toLowerCase();
-    if (!emailLower.endsWith('@e.ntu.edu.sg') && !emailLower.endsWith('@ntu.edu.sg')) {
-      return 'Please use your NTU email address (@e.ntu.edu.sg or @ntu.edu.sg)';
+    // Basic email format validation only
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+      return 'Please enter a valid email address';
     }
     return '';
+
+    // TO REVERT TO NTU-ONLY: Uncomment code below and delete the "return '';" above
+    // const emailLower = email.toLowerCase();
+    // if (!emailLower.endsWith('@e.ntu.edu.sg') && !emailLower.endsWith('@ntu.edu.sg')) {
+    //   return 'Please use your NTU email address (@e.ntu.edu.sg or @ntu.edu.sg)';
+    // }
+    // return '';
   };
 
   const validateStudentId = (id) => {
@@ -405,7 +415,7 @@ const RegisterWithOTP = () => {
 
                   <div className="flex flex-col gap-2">
                     <label htmlFor="ntu_email" className="font-semibold text-gray-700 text-[0.95rem] tracking-wide">
-                      NTU Email Address *
+                      Email Address *
                     </label>
                     <input
                       type="email"
@@ -413,11 +423,11 @@ const RegisterWithOTP = () => {
                       name="ntu_email"
                       value={formData.ntu_email}
                       onChange={handleChange}
-                      placeholder="your.name@e.ntu.edu.sg"
+                      placeholder="your.email@gmail.com"
                       required
                       className="px-5 py-4 border-2 border-gray-200 rounded-xl text-base transition-all duration-200 bg-gray-50 min-h-[56px] focus:outline-none focus:border-blue-500 focus:bg-white focus:shadow-[0_0_0_4px_rgba(59,130,246,0.1)] focus:-translate-y-0.5 max-[480px]:px-4 max-[480px]:py-3.5"
                     />
-                    <small className="block text-slate-400 text-sm mt-1">Use your official NTU email</small>
+                    <small className="block text-slate-400 text-sm mt-1">Use any email you can access (Gmail, Yahoo, etc.)</small>
                   </div>
 
                   <div className="flex flex-col gap-2">
@@ -528,7 +538,7 @@ const RegisterWithOTP = () => {
             ) : (
               // Step 2: OTP Verification
               <div className="w-full max-w-[480px] mx-auto">
-                {/* Testing Mode Banner */}
+                {/* Testing Mode Banner - Only show if testing_otp is provided */}
                 {testingOtp && (
                   <div className="bg-gradient-to-br from-amber-100 to-amber-400 border-2 border-amber-500 rounded-xl p-4 mb-6 text-center shadow-[0_4px_12px_rgba(245,158,11,0.15)]">
                     <h3 className="text-amber-900 text-lg font-bold m-0 mb-2 flex items-center justify-center gap-2">
@@ -550,7 +560,7 @@ const RegisterWithOTP = () => {
                   <p className="text-blue-500 font-semibold text-lg my-2">{userEmail}</p>
                 </div>
 
-                {/* Testing OTP Display */}
+                {/* Testing OTP Display - Only show if testing_otp is provided */}
                 {testingOtp && (
                   <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-[3px] border-blue-500 rounded-2xl p-6 my-6 text-center relative shadow-[0_8px_25px_rgba(59,130,246,0.15)] before:content-['🔐'] before:absolute before:top-[-15px] before:left-1/2 before:-translate-x-1/2 before:bg-white before:px-2 before:text-2xl">
                     <div className="text-blue-800 text-base font-semibold m-0 mb-4 uppercase tracking-wider">
@@ -638,10 +648,13 @@ const RegisterWithOTP = () => {
                   ) : (
                     <>
                       <p className="my-2 text-slate-600 text-[0.95rem] font-semibold text-slate-700">
-                        📧 Check your NTU email inbox
+                        📧 Check your email inbox
                       </p>
                       <p className="my-2 text-slate-600 text-[0.95rem]">
-                        The code expires in 10 minutes
+                        We've sent a verification code to your email. The code expires in 10 minutes.
+                      </p>
+                      <p className="my-2 text-amber-600 text-sm font-medium">
+                        ⚠️ Don't forget to check your spam folder!
                       </p>
                     </>
                   )}
