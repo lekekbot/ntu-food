@@ -9,6 +9,7 @@ from app.schemas.auth import (
     ResendOTPRequest, UserResponse, Token
 )
 from app.services.email_service import email_service
+from app.services.supabase_email_service import supabase_email_service
 import os
 from app.utils.validators import (
     validate_ntu_email, validate_student_id,
@@ -18,6 +19,10 @@ from app.routes.auth import create_access_token, get_password_hash
 import logging
 
 logger = logging.getLogger(__name__)
+
+# Choose email service based on configuration
+USE_SUPABASE_EMAIL = os.getenv('USE_SUPABASE_EMAIL', 'true').lower() == 'true'
+EMAIL_TESTING_MODE = os.getenv('EMAIL_TESTING_MODE', 'false').lower() == 'true'
 
 router = APIRouter()
 
@@ -92,24 +97,26 @@ async def register_with_otp(
     db.add(otp_verification)
     db.commit()
 
-    # Send OTP email in background
-    background_tasks.add_task(
-        email_service.send_otp_email,
-        user_data.ntu_email,
-        otp_code,
-        user_data.name
+    # Send OTP email using Gmail SMTP service
+    success, error_msg = email_service.send_otp_email(
+        recipient_email=user_data.ntu_email,
+        otp_code=otp_code,
+        user_name=user_data.name
     )
 
-    logger.info(f"OTP sent to {user_data.ntu_email}")
-
-    # Check if we're in testing mode
-    testing_mode = os.getenv('EMAIL_TESTING_MODE', 'true').lower() == 'true'
+    if not success and error_msg:
+        # If rate limited or email failed, return error to user
+        logger.error(f"Failed to send OTP to {user_data.ntu_email}: {error_msg}")
+        # Delete the OTP record if email failed
+        db.delete(otp_verification)
+        db.commit()
+        raise HTTPException(status_code=400, detail=error_msg)
 
     return OTPResponse(
-        message="OTP sent successfully to your NTU email" if not testing_mode else "OTP generated for testing",
+        message="Verification code sent to your NTU email" if not EMAIL_TESTING_MODE else "OTP generated for testing",
         email=user_data.ntu_email,
         expires_in_minutes=10,
-        testing_otp=otp_code if testing_mode else None
+        testing_otp=otp_code if EMAIL_TESTING_MODE else None
     )
 
 @router.post("/verify-otp", response_model=Token)
@@ -188,12 +195,11 @@ async def verify_otp(
         db.commit()
         db.refresh(new_user)
 
-        # Send welcome email in background
-        background_tasks.add_task(
-            email_service.send_welcome_email,
-            new_user.ntu_email,
-            new_user.name
-        )
+        # Send welcome email (don't block if it fails)
+        try:
+            email_service.send_welcome_email(new_user.ntu_email, new_user.name)
+        except Exception as e:
+            logger.warning(f"Failed to send welcome email: {e}")
 
         # Create access token
         access_token = create_access_token(data={"sub": new_user.student_id})
@@ -255,24 +261,23 @@ async def resend_otp(
 
     db.commit()
 
-    # Send OTP email in background
-    background_tasks.add_task(
-        email_service.send_otp_email,
-        otp_record.email,
-        new_otp_code,
-        otp_record.name
+    # Send new OTP email using Gmail SMTP service
+    success, error_msg = email_service.send_otp_email(
+        recipient_email=otp_record.email,
+        otp_code=new_otp_code,
+        user_name=otp_record.name
     )
 
-    logger.info(f"OTP resent to {otp_record.email}")
-
-    # Check if we're in testing mode
-    testing_mode = os.getenv('EMAIL_TESTING_MODE', 'true').lower() == 'true'
+    if not success and error_msg:
+        # If rate limited or email failed, return error
+        logger.error(f"Failed to resend OTP to {otp_record.email}: {error_msg}")
+        raise HTTPException(status_code=400, detail=error_msg)
 
     return OTPResponse(
-        message="New OTP sent successfully to your NTU email" if not testing_mode else "New OTP generated for testing",
+        message="New verification code sent to your NTU email" if not EMAIL_TESTING_MODE else "New OTP generated for testing",
         email=otp_record.email,
         expires_in_minutes=10,
-        testing_otp=new_otp_code if testing_mode else None
+        testing_otp=new_otp_code if EMAIL_TESTING_MODE else None
     )
 
 @router.delete("/cancel-registration/{email}")

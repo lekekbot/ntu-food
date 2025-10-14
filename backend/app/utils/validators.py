@@ -5,6 +5,9 @@ def validate_ntu_email(email: str) -> tuple[bool, Optional[str]]:
     """
     Validate if email belongs to NTU domain.
     Returns (is_valid, error_message)
+
+    TEMPORARY: Currently accepts any valid email due to NTU email server blocking.
+    TO REVERT: Uncomment the NTU domain check below when NTU IT whitelists the sender.
     """
     if not email:
         return False, "Email is required"
@@ -14,14 +17,19 @@ def validate_ntu_email(email: str) -> tuple[bool, Optional[str]]:
     if not re.match(email_pattern, email):
         return False, "Invalid email format"
 
-    # Check for NTU domain
-    email_lower = email.lower()
-    allowed_domains = ['@e.ntu.edu.sg', '@ntu.edu.sg']
-
-    if not any(email_lower.endswith(domain) for domain in allowed_domains):
-        return False, "Please use your NTU email address (@e.ntu.edu.sg or @ntu.edu.sg)"
-
+    # TEMPORARY: Accept any valid email (NTU email servers block unknown Gmail senders)
+    # Student verification still enforced via Student ID
     return True, None
+
+    # TO REVERT TO NTU-ONLY: Uncomment the code below and delete the "return True, None" above
+    # # Check for NTU domain
+    # email_lower = email.lower()
+    # allowed_domains = ['@e.ntu.edu.sg', '@ntu.edu.sg']
+    #
+    # if not any(email_lower.endswith(domain) for domain in allowed_domains):
+    #     return False, "Please use your NTU email address (@e.ntu.edu.sg or @ntu.edu.sg)"
+    #
+    # return True, None
 
 def validate_student_id(student_id: str) -> tuple[bool, Optional[str]]:
     """

@@ -25,10 +25,15 @@ class UserCreate(BaseModel):
 
     @validator('ntu_email')
     def validate_ntu_email(cls, v):
+        # TEMPORARY: Accept any valid email (NTU email servers block unknown senders)
+        # TO REVERT: Uncomment the NTU domain check when NTU IT whitelists the sender
         email_str = str(v).lower()
-        if not (email_str.endswith('@e.ntu.edu.sg') or email_str.endswith('@ntu.edu.sg')):
-            raise ValueError('Email must be a valid NTU email address (@e.ntu.edu.sg or @ntu.edu.sg)')
         return email_str
+
+        # TO REVERT TO NTU-ONLY: Uncomment code below and delete the "return email_str" above
+        # if not (email_str.endswith('@e.ntu.edu.sg') or email_str.endswith('@ntu.edu.sg')):
+        #     raise ValueError('Email must be a valid NTU email address (@e.ntu.edu.sg or @ntu.edu.sg)')
+        # return email_str
 
     @validator('student_id')
     def validate_student_id(cls, v):
@@ -80,10 +85,15 @@ class OTPRequest(BaseModel):
 
     @validator('ntu_email')
     def validate_ntu_email(cls, v):
+        # TEMPORARY: Accept any valid email (NTU email servers block unknown senders)
+        # TO REVERT: Uncomment the NTU domain check when NTU IT whitelists the sender
         email_str = str(v).lower()
-        if not (email_str.endswith('@e.ntu.edu.sg') or email_str.endswith('@ntu.edu.sg')):
-            raise ValueError('Email must be a valid NTU email address (@e.ntu.edu.sg or @ntu.edu.sg)')
         return email_str
+
+        # TO REVERT TO NTU-ONLY: Uncomment code below and delete the "return email_str" above
+        # if not (email_str.endswith('@e.ntu.edu.sg') or email_str.endswith('@ntu.edu.sg')):
+        #     raise ValueError('Email must be a valid NTU email address (@e.ntu.edu.sg or @ntu.edu.sg)')
+        # return email_str
 
     @validator('student_id')
     def validate_student_id(cls, v):
