@@ -505,21 +505,137 @@ Admin: Admin Login → Dashboard → Manage Users/Stalls/Menus/Orders
 - **Triggers**: Automatic updated_at timestamp updates
 - **Row Level Security**: Fine-grained access control policies
 
+## 📧 Email Configuration
+
+### Gmail SMTP Integration
+
+The application uses **Gmail SMTP** to send real OTP verification emails with professional HTML templates.
+
+**📋 Setup Gmail SMTP (Required for OTP emails):**
+
+1. **Enable 2-Step Verification** on your Gmail account
+   - Go to: https://myaccount.google.com/security
+   - Enable "2-Step Verification"
+
+2. **Generate Gmail App Password**
+   - Go to: https://myaccount.google.com/apppasswords
+   - Create app password for "NTU Food"
+   - Copy the 16-character password
+
+3. **Configure Environment Variables** in `backend/.env`:
+   ```bash
+   # Email Configuration
+   EMAIL_TESTING_MODE=false  # Set to true for testing (shows OTP on screen)
+   USE_SUPABASE_EMAIL=false  # We use Gmail SMTP
+
+   # Gmail SMTP Configuration
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=587
+   SMTP_EMAIL=your-gmail@gmail.com  # Your Gmail address
+   SMTP_PASSWORD=your-16-char-app-password  # Gmail App Password
+   SMTP_FROM_NAME=NTU Food
+   APP_URL=http://localhost:5173
+   ```
+
+4. **Restart backend** to apply changes:
+   ```bash
+   cd backend
+   python -m uvicorn app.main:app --reload
+   ```
+
+### Email Features
+
+**📨 Professional Email Templates:**
+- **OTP Verification Emails** with NTU Food branding
+- **Welcome Emails** after successful registration
+- **HTML & Plain Text** versions for compatibility
+- **Mobile-Responsive Design** with gradient headers
+- **Security Notices** and expiry warnings
+
+**🔒 Email Security:**
+- **TLS Encryption** (port 587) for secure transmission
+- **Rate Limiting**: Max 3 emails per 5 minutes per address
+- **Retry Logic**: Automatic retry (2 attempts) on failure
+- **Timeout Protection**: 30-second timeout for slow networks
+- **Error Handling**: User-friendly error messages
+
+### Email Validation (Temporary Configuration)
+
+**⚠️ IMPORTANT: Current Email Validation**
+
+Due to NTU email servers blocking unknown Gmail senders, the app **temporarily accepts any valid email** address for registration:
+
+- ✅ **Accepts**: Gmail, Yahoo, Outlook, and all email providers
+- ✅ **Still Required**: Valid NTU Student ID (U1234567A format)
+- ✅ **Security**: Student verification via Student ID remains enforced
+
+**To Revert to NTU-Only Emails** (when you get IT whitelist approval):
+
+1. **Backend** - `app/utils/validators.py` (line 20-32):
+   - Delete `return True, None` on line 22
+   - Uncomment the NTU domain check (lines 25-32)
+
+2. **Backend** - `app/schemas/auth.py` (lines 26-36 and 86-96):
+   - Delete `return email_str`
+   - Uncomment the NTU email validation
+
+3. **Frontend** - `src/components/RegisterWithOTP.tsx` (lines 32-46):
+   - Delete `return '';`
+   - Uncomment the NTU email validation
+   - Update label to "NTU Email Address"
+   - Update placeholder to "your.name@e.ntu.edu.sg"
+
+**Why This Change?**
+- University email servers (like NTU) have strict spam filters
+- They block new/unknown Gmail senders by default
+- This is standard security practice for institutional emails
+- Using personal Gmail allows students to actually receive OTP emails
+
+**Production Solution:**
+- Request NTU IT to whitelist your Gmail sender
+- Or use professional email service (SendGrid, AWS SES, Mailgun)
+- Or register custom domain (e.g., noreply@ntufood.com)
+
+### Testing Modes
+
+**Development Mode** (`EMAIL_TESTING_MODE=true`):
+- OTP displayed on screen for easy testing
+- No actual emails sent
+- Perfect for development and demos
+
+**Production Mode** (`EMAIL_TESTING_MODE=false`):
+- Real emails sent via Gmail SMTP
+- OTP sent to user's email inbox
+- Professional email templates delivered
+
+### Email Deliverability
+
+**Current Status:**
+- ✅ **Gmail → Gmail**: Works perfectly
+- ✅ **Gmail → Yahoo/Outlook**: Works well
+- ⚠️  **Gmail → NTU emails**: Blocked by NTU email servers (institutional security)
+
+**📖 Full Setup Guide:** See `GMAIL_SMTP_SETUP.md` for detailed instructions
+
+---
+
 ## 🔒 Security
 
 ### Authentication & Authorization
 - **2-Factor Authentication** with email-based OTP verification
 - **JWT-based authentication** with role-based authorization
 - **Password hashing** with bcrypt for secure storage
-- **NTU email validation** (@e.ntu.edu.sg/@ntu.edu.sg domain restriction)
+- **Email validation** (currently accepts any valid email - see Email Configuration section)
+- **Student ID validation** (enforces NTU student verification)
 - **Role-based access control** (Student, Stall Owner, Admin)
 
 ### OTP Security Features
 - **Secure OTP generation** with 6-digit random codes
 - **Time-based expiry** (10 minutes) for OTP codes
-- **Rate limiting** (1 minute between requests) to prevent spam
+- **Rate limiting** (max 3 emails per 5 minutes) to prevent spam
 - **Attempt limiting** (maximum 5 failed attempts)
 - **Temporary storage** with automatic cleanup of expired OTPs
+- **SMTP retry logic** with automatic reattempts on failure
 
 ### General Security
 - **Input validation** with Pydantic schemas and custom validators
@@ -527,6 +643,7 @@ Admin: Admin Login → Dashboard → Manage Users/Stalls/Menus/Orders
 - **Protected endpoints** with user authorization checks
 - **Environment variables** for sensitive configuration
 - **Professional email templates** to prevent phishing concerns
+- **TLS/SSL encryption** for all email transmissions
 
 ## 🧪 Testing
 
