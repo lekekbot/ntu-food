@@ -43,7 +43,10 @@ def create_stalls_and_menus():
             cuisine_type="Western",
             is_open=True,
             rating=4.3,
-            owner_id=owner_id
+            owner_id=owner_id,
+            latitude=1.3470,
+            longitude=103.6802,
+            building_name="North Spine Plaza"
         )
         db.add(stall1)
         db.flush()  # Get the ID
@@ -126,7 +129,10 @@ def create_stalls_and_menus():
             cuisine_type="Chinese",
             is_open=True,
             rating=4.5,
-            owner_id=owner_id
+            owner_id=owner_id,
+            latitude=1.3470,
+            longitude=103.6802,
+            building_name="North Spine Plaza"
         )
         db.add(stall2)
         db.flush()
@@ -200,7 +206,7 @@ def create_stalls_and_menus():
         # ==================== STALL 3: Mala Xiang Guo ====================
         stall3 = Stall(
             name="Mala Xiang Guo",
-            location="Koufu @ North Spine",
+            location="Koufu @ South Spine",
             opening_time=time(10, 0),
             closing_time=time(21, 0),
             avg_prep_time=15,
@@ -209,7 +215,10 @@ def create_stalls_and_menus():
             cuisine_type="Chinese",
             is_open=True,
             rating=4.4,
-            owner_id=owner_id
+            owner_id=owner_id,
+            latitude=1.3424,
+            longitude=103.6824,
+            building_name="South Spine (Koufu)"
         )
         db.add(stall3)
         db.flush()

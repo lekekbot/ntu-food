@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 import Login from './components/Login';
 import RegisterWithOTP from './components/RegisterWithOTP';
 import StallList from './components/StallList';
@@ -20,10 +21,11 @@ import './App.css';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <div className="app">
-          <Routes>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <div className="app">
+            <Routes>
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<RegisterWithOTP />} />
@@ -74,9 +76,10 @@ function App() {
             {/* 404 fallback */}
             <Route path="*" element={<Navigate to="/stalls" replace />} />
           </Routes>
-        </div>
-      </Router>
-    </AuthProvider>
+          </div>
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

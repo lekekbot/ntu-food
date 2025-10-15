@@ -242,6 +242,271 @@
   background: #2563eb;
 }
 
+/* Location Prompt Styles */
+.location-prompt {
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  border: 2px solid #3b82f6;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.location-prompt-icon {
+  font-size: 3rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.location-prompt-content {
+  flex: 1;
+}
+
+.location-prompt-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: #1e40af;
+  font-size: 1.25rem;
+}
+
+.location-prompt-content p {
+  margin: 0.25rem 0;
+  color: #1e3a8a;
+  font-size: 0.925rem;
+}
+
+.location-privacy {
+  font-size: 0.825rem !important;
+  color: #475569 !important;
+  margin-top: 0.5rem !important;
+}
+
+.location-prompt-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.enable-location-button,
+.skip-location-button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.925rem;
+}
+
+.enable-location-button {
+  background: #3b82f6;
+  color: white;
+}
+
+.enable-location-button:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.skip-location-button {
+  background: white;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.skip-location-button:hover {
+  background: #f8fafc;
+  color: #475569;
+}
+
+/* Location Status Banner */
+.location-status {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.925rem;
+  font-weight: 500;
+}
+
+.location-status.success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #86efac;
+}
+
+.location-status.error {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.refresh-location-button,
+.retry-location-button {
+  background: transparent;
+  border: 1px solid currentColor;
+  color: inherit;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.refresh-location-button:hover,
+.retry-location-button:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+/* Sort Controls */
+.stall-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sort-controls {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.sort-button {
+  padding: 0.625rem 1.25rem;
+  border: 2px solid #cbd5e1;
+  background: white;
+  color: #475569;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.925rem;
+}
+
+.sort-button:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+.sort-button.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.sort-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.stall-count {
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Distance Filter */
+.distance-filter-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+}
+
+.filter-label {
+  display: block;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.925rem;
+  margin-bottom: 0.75rem;
+}
+
+.distance-filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.distance-filter-button {
+  padding: 0.5rem 1rem;
+  border: 2px solid #cbd5e1;
+  background: white;
+  color: #475569;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+  flex: 1;
+  min-width: 80px;
+}
+
+.distance-filter-button:hover {
+  border-color: #10b981;
+  color: #10b981;
+  background: #ecfdf5;
+}
+
+.distance-filter-button.active {
+  background: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+/* Distance Information */
+.stall-distance {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  padding: 0.5rem;
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.distance-badge {
+  font-weight: 700;
+  color: #047857;
+}
+
+.walking-time {
+  color: #059669;
+  font-weight: 500;
+}
+
 .no-stalls {
   text-align: center;
   padding: 2rem;
@@ -266,5 +531,77 @@
 
   .stall-content h2 {
     font-size: 1.5rem;
+  }
+
+  /* Mobile location prompt */
+  .location-prompt {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .location-prompt-icon {
+    font-size: 2.5rem;
+  }
+
+  .location-prompt-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .enable-location-button,
+  .skip-location-button {
+    width: 100%;
+  }
+
+  /* Mobile location status */
+  .location-status {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .refresh-location-button,
+  .retry-location-button {
+    width: 100%;
+  }
+
+  /* Mobile sort controls */
+  .stall-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .sort-controls {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .sort-button {
+    width: 100%;
+  }
+
+  .stall-count {
+    text-align: center;
+  }
+
+  /* Mobile distance filter */
+  .distance-filter-container {
+    padding: 0.75rem;
+  }
+
+  .distance-filter-buttons {
+    flex-direction: column;
+  }
+
+  .distance-filter-button {
+    width: 100%;
+    min-width: auto;
+  }
+
+  /* Mobile distance info */
+  .stall-distance {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.25rem;
   }
 }

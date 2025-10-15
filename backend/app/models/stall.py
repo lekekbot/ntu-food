@@ -19,6 +19,11 @@ class Stall(Base):
     rating = Column(Float, default=0.0)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
+    # Location data for proximity-based recommendations
+    latitude = Column(Float)
+    longitude = Column(Float)
+    building_name = Column(String)
+
     owner = relationship("User", back_populates="owned_stalls")
     menu_items = relationship("MenuItem", back_populates="stall", cascade="all, delete-orphan")
     orders = relationship("Order", back_populates="stall")

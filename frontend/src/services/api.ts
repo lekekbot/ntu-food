@@ -47,6 +47,7 @@ export const authAPI = {
 export const stallsAPI = {
   getAll: () => api.get('/api/stalls/'),
   getById: (id) => api.get(`/api/stalls/${id}`),
+  getNearby: (lat: number, lng: number) => api.get(`/api/stalls/nearby?lat=${lat}&lng=${lng}`),
 };
 
 // Menu API calls

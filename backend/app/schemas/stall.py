@@ -12,6 +12,9 @@ class StallBase(BaseModel):
     description: Optional[str] = None
     cuisine_type: Optional[str] = None
     image_url: Optional[str] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    building_name: Optional[str] = None
 
 class StallCreate(StallBase):
     pass
@@ -27,12 +30,23 @@ class StallUpdate(BaseModel):
     cuisine_type: Optional[str] = None
     image_url: Optional[str] = None
     is_open: Optional[bool] = None
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
+    building_name: Optional[str] = None
 
 class StallResponse(StallBase):
     id: int
     is_open: bool
     rating: float
     owner_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+class StallWithDistance(StallResponse):
+    """Stall response with distance and walking time information"""
+    distance_km: Optional[float] = None
+    walking_time_minutes: Optional[int] = None
 
     class Config:
         from_attributes = True

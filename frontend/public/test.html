@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page - NTU Food</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .success {
+            color: #22c55e;
+            font-size: 2em;
+        }
+        .test-item {
+            padding: 10px;
+            margin: 10px 0;
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        #api-result {
+            background: #1e293b;
+            color: #10b981;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-box">
+        <h1>✅ Frontend is Working!</h1>
+        <p class="success">If you can see this page, your frontend server is running correctly.</p>
+    </div>
+
+    <div class="test-box">
+        <h2>🧪 System Tests</h2>
+        <div class="test-item">
+            <strong>✓ Static File Serving:</strong> Working (you can see this page)
+        </div>
+        <div class="test-item">
+            <strong>✓ Frontend URL:</strong> <a href="http://localhost:5173">http://localhost:5173</a>
+        </div>
+        <div class="test-item">
+            <strong>✓ Backend URL:</strong> <a href="http://localhost:8000/docs">http://localhost:8000/docs</a>
+        </div>
+    </div>
+
+    <div class="test-box">
+        <h2>🔗 Test Backend Connection</h2>
+        <button onclick="testBackend()">Test Backend API</button>
+        <button onclick="testStalls()">Test Stalls Endpoint</button>
+        <button onclick="goToLogin()">Go to Login Page</button>
+        <div id="api-result" style="margin-top: 15px;"></div>
+    </div>
+
+    <div class="test-box">
+        <h2>📝 What to Do Next:</h2>
+        <ol>
+            <li>Click "Test Backend API" button above to verify backend connection</li>
+            <li>Click "Go to Login Page" to test the React app</li>
+            <li>If you see a blank page after clicking, <strong>press F12</strong> and tell me what errors you see</li>
+        </ol>
+    </div>
+
+    <script>
+        const resultDiv = document.getElementById('api-result');
+
+        async function testBackend() {
+            resultDiv.textContent = 'Testing backend...';
+            try {
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                resultDiv.textContent = '✅ Backend is healthy!\n\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = '❌ Backend Error:\n\n' + error.message;
+            }
+        }
+
+        async function testStalls() {
+            resultDiv.textContent = 'Fetching stalls...';
+            try {
+                const response = await fetch('http://localhost:8000/api/stalls/');
+                const data = await response.json();
+                resultDiv.textContent = '✅ Stalls API working!\n\nFound ' + data.length + ' stalls:\n\n' +
+                    data.map(s => '- ' + s.name).join('\n');
+            } catch (error) {
+                resultDiv.textContent = '❌ API Error:\n\n' + error.message;
+            }
+        }
+
+        function goToLogin() {
+            window.location.href = '/login';
+        }
+
+        // Auto-test on page load
+        window.onload = () => {
+            console.log('✅ Test page loaded successfully');
+            console.log('Frontend server: http://localhost:5173');
+            console.log('Backend server: http://localhost:8000');
+        };
+    </script>
+</body>
+</html>
