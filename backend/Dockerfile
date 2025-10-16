@@ -20,7 +20,6 @@ ENV PYTHONPATH=/app/backend
 EXPOSE 8000
 
 # Entrypoint to run migrations then start the server
-COPY backend/entrypoint.sh /app/backend/entrypoint.sh
 RUN chmod +x /app/backend/entrypoint.sh
 
 CMD ["bash", "-lc", "/app/backend/entrypoint.sh"]
