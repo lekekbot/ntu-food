@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
 import Login from './components/Login';
@@ -23,61 +24,63 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <Router>
-          <div className="app">
-            <Routes>
-            {/* Public routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<RegisterWithOTP />} />
+        <CartProvider>
+          <Router>
+            <div className="app">
+              <Routes>
+                {/* Public routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<RegisterWithOTP />} />
 
-            {/* Admin routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/users" element={<UserManagement />} />
-            <Route path="/admin/accounts" element={<AllAccounts />} />
-            <Route path="/admin/stalls" element={<StallManagement />} />
-            <Route path="/admin/menu" element={<MenuManagement />} />
-            <Route path="/admin/orders" element={<OrderManagement />} />
+                {/* Admin routes */}
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/users" element={<UserManagement />} />
+                <Route path="/admin/accounts" element={<AllAccounts />} />
+                <Route path="/admin/stalls" element={<StallManagement />} />
+                <Route path="/admin/menu" element={<MenuManagement />} />
+                <Route path="/admin/orders" element={<OrderManagement />} />
 
-            {/* Protected routes */}
-            <Route path="/stalls" element={
-              <ProtectedRoute>
-                <StallList />
-              </ProtectedRoute>
-            } />
+                {/* Protected routes */}
+                <Route path="/stalls" element={
+                  <ProtectedRoute>
+                    <StallList />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/stalls/:stallId/menu" element={
-              <ProtectedRoute>
-                <MenuView />
-              </ProtectedRoute>
-            } />
+                <Route path="/stalls/:stallId/menu" element={
+                  <ProtectedRoute>
+                    <MenuView />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/place-order" element={
-              <ProtectedRoute>
-                <OrderForm />
-              </ProtectedRoute>
-            } />
+                <Route path="/place-order" element={
+                  <ProtectedRoute>
+                    <OrderForm />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/queue-status" element={
-              <ProtectedRoute>
-                <QueueStatus />
-              </ProtectedRoute>
-            } />
+                <Route path="/queue-status" element={
+                  <ProtectedRoute>
+                    <QueueStatus />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/orders" element={
-              <ProtectedRoute>
-                <OrderList />
-              </ProtectedRoute>
-            } />
+                <Route path="/orders" element={
+                  <ProtectedRoute>
+                    <OrderList />
+                  </ProtectedRoute>
+                } />
 
-            {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/stalls" replace />} />
+                {/* Default redirect */}
+                <Route path="/" element={<Navigate to="/stalls" replace />} />
 
-            {/* 404 fallback */}
-            <Route path="*" element={<Navigate to="/stalls" replace />} />
-          </Routes>
-          </div>
-        </Router>
+                {/* 404 fallback */}
+                <Route path="*" element={<Navigate to="/stalls" replace />} />
+              </Routes>
+            </div>
+          </Router>
+        </CartProvider>
       </AuthProvider>
     </ErrorBoundary>
   );
