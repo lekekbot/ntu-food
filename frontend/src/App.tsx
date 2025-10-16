@@ -15,6 +15,7 @@ import OrderForm from './components/OrderForm';
 import QueueStatus from './components/QueueStatus';
 import OrderList from './components/OrderList';
 import OrderTracking from './components/OrderTracking';
+import StallOwnerDashboard from './components/stallowner/StallOwnerDashboard';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
 import UserManagement from './components/admin/UserManagement';
@@ -35,6 +36,13 @@ function App() {
                 {/* Public routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<RegisterWithOTP />} />
+
+                {/* Stall Owner routes */}
+                <Route path="/stall-owner/dashboard" element={
+                  <ProtectedRoute>
+                    <StallOwnerDashboard />
+                  </ProtectedRoute>
+                } />
 
                 {/* Admin routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
