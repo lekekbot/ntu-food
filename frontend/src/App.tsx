@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import ErrorBoundary from './components/ErrorBoundary';
+import CartDrawer from './components/CartDrawer';
 import Login from './components/Login';
 import RegisterWithOTP from './components/RegisterWithOTP';
 import StallList from './components/StallList';
@@ -79,6 +80,8 @@ function App() {
                 <Route path="*" element={<Navigate to="/stalls" replace />} />
               </Routes>
             </div>
+            {/* Global Cart Drawer - Available on all pages */}
+            <CartDrawer />
           </Router>
         </CartProvider>
       </AuthProvider>
