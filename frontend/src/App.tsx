@@ -10,6 +10,7 @@ import RegisterWithOTP from './components/RegisterWithOTP';
 import StallList from './components/StallList';
 import MenuView from './components/MenuView';
 import Checkout from './components/Checkout';
+import OrderConfirmation from './components/OrderConfirmation';
 import OrderForm from './components/OrderForm';
 import QueueStatus from './components/QueueStatus';
 import OrderList from './components/OrderList';
@@ -59,6 +60,12 @@ function App() {
                 <Route path="/checkout" element={
                   <ProtectedRoute>
                     <Checkout />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/order-confirmation" element={
+                  <ProtectedRoute>
+                    <OrderConfirmation />
                   </ProtectedRoute>
                 } />
 
