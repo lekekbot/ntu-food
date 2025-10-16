@@ -11,22 +11,28 @@ NTU Food is a mobile-first food ordering application designed to streamline the 
 Both backend API and frontend application are fully functional:
 
 ### **Backend (FastAPI):**
+- ✅ **Location-Based Discovery** 🆕 with GPS distance calculation and radius filtering
+- ✅ **Proximity Search API** 🆕 with Haversine formula and walking time estimates
 - ✅ **Full Authentication System** with NTU email validation and 2FA OTP verification
 - ✅ **Professional Email Service** with HTML templates and SMTP integration
 - ✅ **OTP Verification System** with security features (rate limiting, expiry, attempts)
 - ✅ **Complete Order Management** with automatic queue assignment
 - ✅ **Smart Queue System** with real-time position tracking
 - ✅ **Database Models** with proper relationships and validation
-- ✅ **40+ API Endpoints** fully tested and working (including admin endpoints)
+- ✅ **45+ API Endpoints** fully tested and working (including admin and location endpoints)
 - ✅ **JWT Security** with role-based authorization
 - ✅ **Admin API Routes** with full CRUD operations and database persistence
 
 ### **Frontend (React TypeScript):**
+- ✅ **GPS-Powered Location Services** 🆕 with browser Geolocation API integration
+- ✅ **Distance-Based Filtering** 🆕 with radius options (500m to 5km) and smart sorting
+- ✅ **Walking Time Estimates** 🆕 displayed on stall cards with distance badges
+- ✅ **Location Permission UI** 🆕 with privacy-first design and graceful fallback
 - ✅ **Complete User Interface** with responsive design
 - ✅ **Advanced Authentication** with 2-step OTP verification and demo mode
 - ✅ **Demo-Friendly Registration** with on-screen OTP display and auto-fill
 - ✅ **Professional UI Components** with Material Design inspiration
-- ✅ **Stall Browsing** with real-time status and ratings
+- ✅ **Stall Browsing** with real-time status, ratings, and proximity information
 - ✅ **Interactive Menu View** with cart and special requests
 - ✅ **Order Management** with placement and tracking
 - ✅ **Real-time Queue Status** with auto-refresh
@@ -37,6 +43,9 @@ Both backend API and frontend application are fully functional:
 ## 🚀 Features
 
 ### For Students (Web & Mobile App)
+- **📍 Location-Based Recommendations**: Find nearby stalls using GPS with distance and walking time estimates
+- **🗺️ Distance Filtering**: Filter stalls by radius (≤500m, ≤1km, ≤2km, ≤5km) similar to Grab
+- **🧭 Smart Sorting**: View stalls sorted by distance or in default order
 - **Browse Stalls & Menus**: Interactive grid view of all campus food stalls with real-time status and descriptions
 - **Smart Menu Interface**: Add items to cart with quantity controls and special requests
 - **Advance Ordering**: Place orders for specific pickup time slots with cost calculation
@@ -45,7 +54,7 @@ Both backend API and frontend application are fully functional:
 - **Order History**: Complete order management with quick reorder functionality
 - **NTU Authentication**: Secure 2-factor authentication with OTP email verification
 - **Demo-Ready Registration**: Professional registration flow with on-screen OTP display
-- **Stall Details**: View stall descriptions, cuisine types, operating hours, and ratings
+- **Stall Details**: View stall descriptions, cuisine types, operating hours, ratings, and location
 
 ### For Stall Owners (Web Dashboard)
 - **Order Management**: Accept, prepare, and complete orders
@@ -53,6 +62,42 @@ Both backend API and frontend application are fully functional:
 - **Analytics Dashboard**: View sales reports and popular items
 - **Queue Management**: Manage virtual queue and estimated wait times
 - **Operating Hours**: Set and update stall operating hours
+
+## 📍 Location-Based Stall Discovery - **🆕 NEW!**
+
+Find nearby food stalls with GPS-powered distance calculation and smart filtering, just like Grab!
+
+### Key Features
+- **🗺️ Proximity Search**: Automatically detect your location and find nearby stalls
+- **📏 Distance Calculation**: Uses Haversine formula for accurate distances in kilometers
+- **⏱️ Walking Time Estimates**: Shows estimated walking time based on 5 km/h average speed
+- **🎯 Radius Filters**: Filter by distance (≤500m, ≤1km, ≤2km, ≤5km)
+- **🧭 Flexible Sorting**: Toggle between "Nearest First" and "All Stalls" views
+- **🔒 Privacy-First**: Location is only used for calculations, never stored
+- **📱 Browser Geolocation**: Works on both mobile and desktop browsers
+- **🏫 Real NTU Data**: 17 real NTU eateries with accurate campus coordinates
+
+### How It Works
+1. **Permission Request**: App requests location permission when you login
+2. **Automatic Distance Calculation**: Backend calculates distances to all stalls
+3. **Smart Sorting**: Stalls displayed with distance badges (e.g., "0.5 km away • 6 min walk")
+4. **Filter Options**: Choose distance radius or view all stalls
+5. **Real-Time Updates**: Refresh location anytime to recalculate distances
+
+### Technical Implementation
+- **Backend**: Haversine formula in `app/utils/distance.py`
+- **API Endpoint**: `GET /api/stalls/nearby?lat=X&lng=Y`
+- **Frontend**: Location service in `src/services/locationService.ts`
+- **Database**: latitude, longitude, building_name columns in stalls table
+- **Data Source**: Real NTU coordinates from `ntu_eateries_partial_list.csv`
+
+### Database Migration
+Run the location migration to add coordinates to existing stalls:
+```bash
+cd backend
+python migrations/add_location_to_stalls.py
+python import_ntu_eateries.py  # Import real NTU locations
+```
 
 ### For Administrators (Web Portal) - **🆕 FULLY IMPLEMENTED**
 - **Comprehensive Dashboard**: Real-time analytics with revenue, orders, and user statistics
@@ -76,17 +121,23 @@ NTU-Food/
 │   │   ├── routes/     # API endpoint definitions (auth, auth_otp, stalls, orders, queue, admin)
 │   │   ├── schemas/    # Pydantic request/response schemas with OTP & admin validation
 │   │   ├── services/   # Email service with OTP generation and SMTP integration
-│   │   ├── utils/      # NTU email validation and security utilities
+│   │   ├── utils/      # NTU email validation, security, and distance calculations
 │   │   └── database/   # Database configuration and initialization
+│   ├── migrations/     # Database migration scripts
+│   │   └── add_location_to_stalls.py  # 🆕 Add location columns migration
 │   ├── requirements.txt
 │   ├── manage_db.py    # Database management utilities
 │   ├── seed_admin.py   # Admin account creation script
 │   ├── seed_stalls.py  # Seed 3 realistic NTU food stalls with menus
+│   ├── seed_additional_stalls.py  # 🆕 Seed 4 additional stalls with locations
 │   ├── seed_test_users.py  # Seed 3 test student accounts for development
 │   ├── seed_supabase.py     # Supabase database seeding script
+│   ├── import_ntu_eateries.py  # 🆕 Import real NTU locations from CSV
+│   ├── update_existing_stalls.py  # 🆕 Update existing stalls with coordinates
 │   ├── test_complete_flow.py  # Comprehensive API testing
 │   ├── test_supabase_connection.py  # Supabase connection test
-│   └── supabase_migration.sql       # SQL migration script for Supabase
+│   ├── supabase_migration.sql       # SQL migration script for Supabase
+│   └── ntu_eateries_partial_list.csv  # 🆕 Real NTU eatery coordinates
 ├── frontend/           # React TypeScript web application
 │   ├── public/         # Static assets
 │   ├── src/
@@ -94,7 +145,9 @@ NTU-Food/
 │   │   │   ├── admin/  # Admin dashboard components (UserManagement, StallManagement, etc.)
 │   │   │   └── ...     # Student app components (Auth, Stalls, Orders, Queue)
 │   │   ├── context/    # Authentication context and state management
-│   │   ├── services/   # API integration (student & admin API clients)
+│   │   ├── services/   # API integration and location services
+│   │   │   ├── api.ts  # API client with stalls.getNearby() endpoint
+│   │   │   └── locationService.ts  # 🆕 Browser Geolocation API integration
 │   │   ├── App.tsx     # Main application with routing
 │   │   ├── index.css   # Tailwind CSS directives and global styles
 │   │   └── main.tsx    # Application entry point
@@ -413,6 +466,7 @@ Admin: Admin Login → Dashboard → Manage Users/Stalls/Menus/Orders
 
 ### Stalls
 - `GET /api/stalls/` - List all stalls with location and operating hours
+- `GET /api/stalls/nearby?lat={lat}&lng={lng}` - **🆕 Get nearby stalls sorted by distance with walking times**
 - `GET /api/stalls/{id}` - Get detailed stall information
 - `POST /api/stalls/` - Create new stall (Admin/Stall Owner only)
 - `PUT /api/stalls/{id}` - Update stall information (Owner only)
@@ -484,8 +538,9 @@ Admin: Admin Login → Dashboard → Manage Users/Stalls/Menus/Orders
   - Email verification status, timestamps, hashed passwords
 - **otp_verifications** - Temporary OTP storage for email verification
   - Email, OTP code, user registration data, expiry (10 mins), attempts tracking (max 5)
-- **stalls** - Food stall information with operating hours and location
+- **stalls** - Food stall information with operating hours and GPS coordinates
   - Name, location, operating hours, average prep time, owner relationship, ratings
+  - **🆕 Location fields**: latitude (FLOAT), longitude (FLOAT), building_name (VARCHAR) for proximity search
 - **menu_items** - Menu items for each stall with availability tracking
   - Name, description, price, category, availability status, dietary info (vegetarian, halal)
 - **orders** - Order transactions with automatic queue assignment
@@ -759,11 +814,13 @@ Project Link: [https://github.com/ajiteshmanoj/ntu-food](https://github.com/ajit
 - **Dual Database Support** - SQLite for dev, PostgreSQL for production
 
 ### 📊 Stats
-- **~5,000+ lines** of production-ready code
+- **~6,000+ lines** of production-ready code
 - **Cloud database** - Supabase PostgreSQL with connection pooling
+- **17 real NTU eateries** - Actual campus coordinates and locations
+- **GPS-powered recommendations** - Haversine formula distance calculation
 - **Full database persistence** with automatic backups
 - **Real-time synchronization** between admin and student apps
-- **100% functional** - all features working and tested
+- **100% functional** - all features working and tested including location services
 - **7 detailed guides** - Setup, testing, admin, and migration documentation
 
 ---
@@ -771,6 +828,18 @@ Project Link: [https://github.com/ajiteshmanoj/ntu-food](https://github.com/ajit
 **Status**: Production-ready full-stack application with cloud database and comprehensive admin panel.
 
 ### 🚀 Latest Updates
+
+**Location-Based Stall Discovery (2025-10-16)** 🆕
+- ✅ GPS-powered proximity search with Haversine distance calculation
+- ✅ Distance filtering by radius (500m, 1km, 2km, 5km) similar to Grab
+- ✅ Walking time estimates based on distance
+- ✅ Real-time location permission handling with privacy-first approach
+- ✅ Database migration for latitude, longitude, building_name columns
+- ✅ Imported 17 real NTU eateries with accurate campus coordinates
+- ✅ New API endpoint: GET /api/stalls/nearby?lat=X&lng=Y
+- ✅ Frontend location service with browser Geolocation API
+- ✅ Smart UI with "Nearest First" and "All Stalls" toggle
+- ✅ Distance badges on stall cards (e.g., "0.5 km away • 6 min walk")
 
 **Supabase Migration Complete (2025-01-13)**
 - ✅ Migrated from SQLite to Supabase PostgreSQL

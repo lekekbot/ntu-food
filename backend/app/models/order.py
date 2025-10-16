@@ -5,12 +5,17 @@ from app.database.database import Base
 import enum
 
 class OrderStatus(enum.Enum):
-    PENDING = "pending"
-    ACCEPTED = "accepted"
-    PREPARING = "preparing"
-    READY = "ready"
-    COMPLETED = "completed"
-    CANCELLED = "cancelled"
+    PENDING_PAYMENT = "pending_payment"  # Order placed, awaiting payment confirmation
+    CONFIRMED = "confirmed"              # Payment confirmed, in queue
+    PREPARING = "preparing"              # Being prepared by stall
+    READY = "ready"                      # Ready for pickup
+    COMPLETED = "completed"              # Collected by student
+    CANCELLED = "cancelled"              # Cancelled by student or stall
+
+class PaymentStatus(enum.Enum):
+    PENDING = "pending"                  # Awaiting payment
+    CONFIRMED = "confirmed"              # Payment received
+    FAILED = "failed"                    # Payment failed
 
 class Order(Base):
     __tablename__ = "orders"
@@ -19,10 +24,13 @@ class Order(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     stall_id = Column(Integer, ForeignKey("stalls.id"), nullable=False)
     total_amount = Column(Float, nullable=False)
-    status = Column(Enum(OrderStatus, name='order_status', values_callable=lambda x: [e.value for e in x]), default=OrderStatus.PENDING)
+    status = Column(Enum(OrderStatus, name='order_status', values_callable=lambda x: [e.value for e in x]), default=OrderStatus.PENDING_PAYMENT)
+    payment_status = Column(Enum(PaymentStatus, name='payment_status', values_callable=lambda x: [e.value for e in x]), default=PaymentStatus.PENDING)
+    payment_method = Column(String, default="paynow")  # paynow, cash, card
     queue_number = Column(Integer)
-    pickup_time = Column(DateTime)
-    order_number = Column(String)
+    pickup_window_start = Column(DateTime)  # Start of pickup window
+    pickup_window_end = Column(DateTime)    # End of pickup window
+    order_number = Column(String, unique=True, index=True)
     special_instructions = Column(Text)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
