@@ -146,7 +146,7 @@ const RegisterWithOTP = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/otp/register', {
+      const response = await fetch('https://ntu-food-production.up.railway.app/api/auth/otp/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ const RegisterWithOTP = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/otp/verify-otp', {
+      const response = await fetch('https://ntu-food-production.up.railway.app/api/auth/otp/verify-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -259,7 +259,7 @@ const RegisterWithOTP = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/api/auth/otp/resend-otp', {
+      const response = await fetch('https://ntu-food-production.up.railway.app/api/auth/otp/resend-otp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

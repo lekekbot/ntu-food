@@ -69,7 +69,7 @@
             <strong>✓ Frontend URL:</strong> <a href="http://localhost:5173">http://localhost:5173</a>
         </div>
         <div class="test-item">
-            <strong>✓ Backend URL:</strong> <a href="http://localhost:8000/docs">http://localhost:8000/docs</a>
+            <strong>✓ Backend URL:</strong> <a href="https://ntu-food-production.up.railway.app/docs">https://ntu-food-production.up.railway.app/docs</a>
         </div>
     </div>
 
@@ -96,7 +96,7 @@
         async function testBackend() {
             resultDiv.textContent = 'Testing backend...';
             try {
-                const response = await fetch('http://localhost:8000/health');
+                const response = await fetch('https://ntu-food-production.up.railway.app/health');
                 const data = await response.json();
                 resultDiv.textContent = '✅ Backend is healthy!\n\n' + JSON.stringify(data, null, 2);
             } catch (error) {
@@ -107,7 +107,7 @@
         async function testStalls() {
             resultDiv.textContent = 'Fetching stalls...';
             try {
-                const response = await fetch('http://localhost:8000/api/stalls/');
+                const response = await fetch('https://ntu-food-production.up.railway.app/api/stalls/');
                 const data = await response.json();
                 resultDiv.textContent = '✅ Stalls API working!\n\nFound ' + data.length + ' stalls:\n\n' +
                     data.map(s => '- ' + s.name).join('\n');
@@ -124,7 +124,7 @@
         window.onload = () => {
             console.log('✅ Test page loaded successfully');
             console.log('Frontend server: http://localhost:5173');
-            console.log('Backend server: http://localhost:8000');
+            console.log('Backend server: https://ntu-food-production.up.railway.app');
         };
     </script>
 </body>

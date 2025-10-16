@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'https://ntu-food-production.up.railway.app',
         changeOrigin: true,
       },
     },
