@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { ordersAPI } from '../services/api';
+import notify from '../utils/notifications';
 import './Checkout.css';
 
 const Checkout: React.FC = () => {
@@ -98,17 +99,18 @@ const Checkout: React.FC = () => {
 
   const handlePlaceOrder = async () => {
     if (!selectedSlot) {
-      setError('Please select a pickup time slot');
+      notify.warning('Please select a pickup time slot');
       return;
     }
 
     if (!stallId) {
-      setError('Invalid stall selection');
+      notify.error('Invalid stall selection');
       return;
     }
 
     setLoading(true);
     setError('');
+    const loadingToast = notify.loading('Placing your order...');
 
     try {
       const { start, end } = parseTimeSlot(selectedSlot);
@@ -131,6 +133,10 @@ const Checkout: React.FC = () => {
       // Clear cart on successful order
       clearCart();
 
+      // Dismiss loading and show success
+      notify.dismiss(loadingToast);
+      notify.success('Order placed successfully!');
+
       // Navigate to order confirmation with order details
       navigate('/order-confirmation', {
         state: {
@@ -140,7 +146,10 @@ const Checkout: React.FC = () => {
       });
     } catch (err: any) {
       console.error('Failed to place order:', err);
-      setError(err.response?.data?.detail || 'Failed to place order. Please try again.');
+      notify.dismiss(loadingToast);
+      const errorMsg = err.response?.data?.detail || 'Failed to place order. Please try again.';
+      setError(errorMsg);
+      notify.error(errorMsg);
     } finally {
       setLoading(false);
     }

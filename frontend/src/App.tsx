@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -111,6 +112,8 @@ function App() {
             </div>
             {/* Global Cart Drawer - Available on all pages */}
             <CartDrawer />
+            {/* Toast Notifications */}
+            <Toaster position="top-right" />
           </Router>
         </CartProvider>
       </AuthProvider>

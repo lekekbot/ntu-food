@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ordersAPI } from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import notify from '../utils/notifications';
 import './OrderList.css';
 
 type OrderStatus = 'PENDING_PAYMENT' | 'CONFIRMED' | 'PREPARING' | 'READY' | 'COMPLETED' | 'CANCELLED';
@@ -28,6 +29,7 @@ const OrderList: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
+  const [notifiedOrders, setNotifiedOrders] = useState<Set<number>>(new Set());
 
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -41,6 +43,16 @@ const OrderList: React.FC = () => {
       stopAutoRefresh();
     };
   }, []);
+
+  // Notify when orders become ready
+  useEffect(() => {
+    orders.forEach(order => {
+      if (order.status === 'READY' && !notifiedOrders.has(order.id)) {
+        notify.orderReady(order.queue_number);
+        setNotifiedOrders(prev => new Set(prev).add(order.id));
+      }
+    });
+  }, [orders]);
 
   const startAutoRefresh = () => {
     // Auto-refresh every 30 seconds

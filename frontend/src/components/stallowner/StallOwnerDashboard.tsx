@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ordersAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import notify from '../../utils/notifications';
 import './StallOwnerDashboard.css';
 
 type OrderStatus = 'PENDING_PAYMENT' | 'CONFIRMED' | 'PREPARING' | 'READY' | 'COMPLETED' | 'CANCELLED';
@@ -46,6 +47,7 @@ const StallOwnerDashboard: React.FC = () => {
   const [error, setError] = useState('');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
+  const [previousOrderIds, setPreviousOrderIds] = useState<Set<number>>(new Set());
 
   const refreshIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -57,6 +59,28 @@ const StallOwnerDashboard: React.FC = () => {
       stopAutoRefresh();
     };
   }, []);
+
+  // Detect new orders and play notification
+  useEffect(() => {
+    if (previousOrderIds.size === 0 && orders.length > 0) {
+      // Initial load - just set the IDs
+      setPreviousOrderIds(new Set(orders.map(o => o.id)));
+      return;
+    }
+
+    // Check for new orders
+    const currentOrderIds = new Set(orders.map(o => o.id));
+    const newOrders = orders.filter(o => !previousOrderIds.has(o.id));
+
+    if (newOrders.length > 0) {
+      // Play notification for each new order
+      newOrders.forEach(order => {
+        notify.newOrder(order.queue_number);
+      });
+    }
+
+    setPreviousOrderIds(currentOrderIds);
+  }, [orders]);
 
   const startAutoRefresh = () => {
     // Auto-refresh every 5 seconds for stall owners
@@ -100,8 +124,10 @@ const StallOwnerDashboard: React.FC = () => {
       await ordersAPI.confirmPayment(orderId, { payment_reference: `PAY-${Date.now()}` });
       await fetchOrders();
       setSelectedOrder(null);
+      notify.success('Payment confirmed successfully!');
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to confirm payment');
+      const errorMsg = err.response?.data?.detail || 'Failed to confirm payment';
+      notify.error(errorMsg);
     } finally {
       setActionLoading(false);
     }
@@ -113,8 +139,16 @@ const StallOwnerDashboard: React.FC = () => {
       await ordersAPI.updateStatus(orderId, { status: newStatus });
       await fetchOrders();
       setSelectedOrder(null);
+      const statusMessages = {
+        'PREPARING': 'Started preparing order!',
+        'READY': 'Order marked as ready for pickup!',
+        'CONFIRMED': 'Order confirmed!',
+        'CANCELLED': 'Order cancelled',
+      };
+      notify.success(statusMessages[newStatus] || 'Status updated successfully!');
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to update status');
+      const errorMsg = err.response?.data?.detail || 'Failed to update status';
+      notify.error(errorMsg);
     } finally {
       setActionLoading(false);
     }
@@ -126,8 +160,10 @@ const StallOwnerDashboard: React.FC = () => {
       await ordersAPI.completeOrder(orderId);
       await fetchOrders();
       setSelectedOrder(null);
+      notify.success('Order completed successfully!');
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to complete order');
+      const errorMsg = err.response?.data?.detail || 'Failed to complete order';
+      notify.error(errorMsg);
     } finally {
       setActionLoading(false);
     }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import notify from '../utils/notifications';
 import './CartDrawer.css';
 
 const CartDrawer: React.FC = () => {
@@ -21,7 +22,7 @@ const CartDrawer: React.FC = () => {
 
   const handleCheckout = () => {
     if (cart.length === 0) {
-      alert('Your cart is empty');
+      notify.warning('Your cart is empty');
       return;
     }
     closeCart();
@@ -31,6 +32,7 @@ const CartDrawer: React.FC = () => {
   const handleClearCart = () => {
     if (window.confirm('Are you sure you want to clear your cart?')) {
       clearCart();
+      notify.success('Cart cleared successfully');
     }
   };
 
