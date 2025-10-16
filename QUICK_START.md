@@ -2,6 +2,25 @@
 
 ## ⚡ 5-Minute Setup
 
+### Backend/Frontend (No Docker)
+
+Run servers locally without Docker:
+
+```bash
+# Terminal 1: Backend
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+./entrypoint.sh
+
+# Terminal 2: Frontend
+cd frontend
+npm install
+npm run dev
+```
+
+API will be at `http://localhost:8000` and frontend at `http://localhost:5173`.
+
 ### 1. Open Admin Panel
 ```
 http://localhost:5173/admin/login

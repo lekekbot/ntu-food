@@ -9,8 +9,10 @@ else
 fi
 
 echo "🔄 Running database migrations..."
-# Ensure our package paths are available
-export PYTHONPATH=/app/backend
+# Ensure paths work outside Docker
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+export PYTHONPATH="$SCRIPT_DIR"
 
 # Run idempotent migrations (they check and only apply if needed)
 python migrations/add_location_to_stalls.py || true
