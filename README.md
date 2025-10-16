@@ -543,8 +543,10 @@ Admin: Admin Login → Dashboard → Manage Users/Stalls/Menus/Orders
   - **🆕 Location fields**: latitude (FLOAT), longitude (FLOAT), building_name (VARCHAR) for proximity search
 - **menu_items** - Menu items for each stall with availability tracking
   - Name, description, price, category, availability status, dietary info (vegetarian, halal)
-- **orders** - Order transactions with automatic queue assignment
-  - Order number generation, status tracking (ENUM: pending/preparing/ready/completed/cancelled)
+- **orders** - Order transactions with automatic queue assignment and payment tracking
+  - Order number generation, status tracking (ENUM: pending_payment/confirmed/preparing/ready/completed/cancelled)
+  - **🆕 Payment tracking**: payment_status (ENUM: pending/confirmed/failed), payment_method (paynow/cash/card)
+  - **🆕 Pickup windows**: pickup_window_start, pickup_window_end for scheduled pickups
   - Pickup time, total amount, special instructions
 - **order_items** - Items within each order with special requests
   - Quantity, unit price, subtotal, special requests for each menu item
@@ -829,7 +831,48 @@ Project Link: [https://github.com/ajiteshmanoj/ntu-food](https://github.com/ajit
 
 ### 🚀 Latest Updates
 
-**Location-Based Stall Discovery (2025-10-16)** 🆕
+**Complete Ordering System - Database Foundation (2025-10-16)** 🆕 🚧 **IN PROGRESS**
+- ✅ **Phase 1: Database Schema Enhanced**
+  - Added `payment_status` enum (pending, confirmed, failed)
+  - Added `payment_method` column (paynow, cash, card)
+  - Added `pickup_window_start` and `pickup_window_end` columns
+  - Updated `order_status` enum with new flow (pending_payment → confirmed → preparing → ready → completed)
+  - Created comprehensive migration script with rollback capability
+  - Updated Order model and schemas for complete ordering flow
+
+**🎯 Next Phase: Building Complete Grab-Style Ordering System**
+The database foundation is ready. Remaining work for next session:
+
+**Student Ordering Flow (7 components):**
+1. ⏳ Cart management system with localStorage persistence
+2. ⏳ Stall Detail page with complete menu and add-to-cart
+3. ⏳ Shopping Cart drawer component with item management
+4. ⏳ Checkout page with pickup time slot selector (15-min intervals)
+5. ⏳ Order Confirmation page with QR code and queue position
+6. ⏳ Enhanced My Orders page with real-time tracking
+7. ⏳ Order Tracking detail page with progress bar and countdown
+
+**Stall Owner Dashboard (4 components):**
+8. ⏳ Stall Owner login and authentication
+9. ⏳ Real-time Order Dashboard with queue sections (New/In Queue/Preparing/Ready)
+10. ⏳ Order Detail Modal with action buttons
+11. ⏳ Queue Management with capacity controls
+
+**Backend APIs (3 components):**
+12. ⏳ Student order API endpoints (create, track, cancel)
+13. ⏳ Stall Owner API endpoints (confirm payment, update status)
+14. ⏳ Queue management logic with recalculation
+
+**Polish (3 components):**
+15. ⏳ UI polish with loading states and notifications
+16. ⏳ Real-time polling implementation (10s student, 5s owner)
+17. ⏳ Test data and stall owner account seeding
+
+**Estimated Work:** ~40-60 hours of development remaining (~20% complete)
+
+---
+
+**Location-Based Stall Discovery (2025-10-16)**
 - ✅ GPS-powered proximity search with Haversine distance calculation
 - ✅ Distance filtering by radius (500m, 1km, 2km, 5km) similar to Grab
 - ✅ Walking time estimates based on distance
