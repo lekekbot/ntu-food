@@ -14,6 +14,7 @@ import OrderConfirmation from './components/OrderConfirmation';
 import OrderForm from './components/OrderForm';
 import QueueStatus from './components/QueueStatus';
 import OrderList from './components/OrderList';
+import OrderTracking from './components/OrderTracking';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
 import UserManagement from './components/admin/UserManagement';
@@ -84,6 +85,12 @@ function App() {
                 <Route path="/orders" element={
                   <ProtectedRoute>
                     <OrderList />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/order-tracking/:orderId" element={
+                  <ProtectedRoute>
+                    <OrderTracking />
                   </ProtectedRoute>
                 } />
 
