@@ -9,6 +9,7 @@ import Login from './components/Login';
 import RegisterWithOTP from './components/RegisterWithOTP';
 import StallList from './components/StallList';
 import MenuView from './components/MenuView';
+import Checkout from './components/Checkout';
 import OrderForm from './components/OrderForm';
 import QueueStatus from './components/QueueStatus';
 import OrderList from './components/OrderList';
@@ -52,6 +53,12 @@ function App() {
                 <Route path="/stalls/:stallId/menu" element={
                   <ProtectedRoute>
                     <MenuView />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/checkout" element={
+                  <ProtectedRoute>
+                    <Checkout />
                   </ProtectedRoute>
                 } />
 
