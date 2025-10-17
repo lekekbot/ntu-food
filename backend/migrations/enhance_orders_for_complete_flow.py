@@ -102,16 +102,28 @@ def migrate():
 
             # Step 5: Update existing order statuses to match new enum (only if there are orders)
             print("📝 Updating existing order statuses...")
-            conn.execute(text("""
-                UPDATE orders
-                SET status = 'pending_payment'
-                WHERE status = 'pending'
-            """))
-            conn.execute(text("""
-                UPDATE orders
-                SET status = 'confirmed'
-                WHERE status = 'accepted'
-            """))
+            if is_postgres:
+                conn.execute(text("""
+                    UPDATE orders
+                    SET status = 'pending_payment'
+                    WHERE LOWER(status::text) = 'pending'
+                """))
+                conn.execute(text("""
+                    UPDATE orders
+                    SET status = 'confirmed'
+                    WHERE LOWER(status::text) = 'accepted'
+                """))
+            else:
+                conn.execute(text("""
+                    UPDATE orders
+                    SET status = 'pending_payment'
+                    WHERE LOWER(status) = 'pending'
+                """))
+                conn.execute(text("""
+                    UPDATE orders
+                    SET status = 'confirmed'
+                    WHERE LOWER(status) = 'accepted'
+                """))
             print("✅ Updated existing order statuses")
 
             conn.commit()
