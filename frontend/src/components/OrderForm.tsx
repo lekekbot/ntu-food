@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ordersAPI } from '../services/api';
 import './OrderForm.css';
@@ -158,9 +158,9 @@ const OrderForm = () => {
                 value={orderData.special_instructions}
                 onChange={handleInputChange}
                 placeholder="Any special instructions for your order..."
-                rows="3"
+                rows={3}
                 className="form-textarea"
-                maxLength="500"
+                maxLength={500}
               />
               <small className="form-help">
                 {orderData.special_instructions.length}/500 characters

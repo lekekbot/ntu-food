@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminOrdersApi, adminStallsApi } from '../../services/adminApi';
 import './AdminStyles.css';
@@ -26,7 +26,6 @@ const OrderManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState('');
   const [filterStall, setFilterStall] = useState('');
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { ordersAPI } from '../services/api';
 import './OrderTracking.css';
@@ -108,7 +108,7 @@ const OrderTracking: React.FC = () => {
       if (response.data.status === 'COMPLETED' || response.data.status === 'CANCELLED') {
         stopAutoRefresh();
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch order:', err);
       if (!silent) {
         setError('Failed to load order details. Please try again.');
@@ -202,11 +202,12 @@ const OrderTracking: React.FC = () => {
     }
 
     try {
-      await ordersAPI.cancel(order.id);
+      await ordersAPI.updateStatus(order.id, { status: 'CANCELLED' });
       fetchOrder();
       alert('Order cancelled successfully');
-    } catch (err: any) {
-      alert(err.response?.data?.detail || 'Failed to cancel order');
+    } catch (err: unknown) {
+      const apiErr = err as { response?: { data?: { detail?: string } } };
+      alert(apiErr.response?.data?.detail || 'Failed to cancel order');
     }
   };
 

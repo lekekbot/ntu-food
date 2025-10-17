@@ -60,6 +60,32 @@ export const ordersAPI = {
   create: (orderData) => api.post('/api/orders/', orderData),
   getAll: () => api.get('/api/orders/'),
   getById: (id) => api.get(`/api/orders/${id}`),
+  // Fetch orders for the current stall owner
+  getStallOrders: async () => {
+    const profile = await authAPI.getProfile();
+    const userId = profile.data.id;
+    const stalls = await stallsAPI.getAll();
+    const dataUnknown: unknown = stalls.data;
+    if (!Array.isArray(dataUnknown)) {
+      throw new Error('Unexpected stalls response');
+    }
+    const myStall = (dataUnknown as { owner_id?: number; id: number }[]).find(
+      (s) => s.owner_id === userId
+    );
+    if (!myStall) {
+      throw new Error('No stall assigned to current user');
+    }
+    return api.get(`/api/orders/stall/${myStall.id}/orders`);
+  },
+  // Confirm payment for an order (backend expects a boolean)
+  confirmPayment: (orderId: number) =>
+    api.put(`/api/orders/${orderId}/confirm-payment`, { payment_confirmed: true }),
+  // Update order status
+  updateStatus: (orderId: number, body: { status: string }) =>
+    api.put(`/api/orders/${orderId}/status`, body),
+  // Complete order convenience helper
+  completeOrder: (orderId: number) =>
+    api.put(`/api/orders/${orderId}/status`, { status: 'COMPLETED' }),
 };
 
 // Queue API calls

@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 
 const RegisterWithOTP = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  // const { login } = useAuth();
 
   // Form states
   const [step, setStep] = useState(1); // 1: Registration, 2: OTP Verification

@@ -224,11 +224,11 @@ export const notifyPromise = {
       promise,
       {
         loading: messages.loading,
-        success: (data) => {
+        success: () => {
           if (playSound) soundNotifier.success();
           return messages.success;
         },
-        error: (err) => {
+        error: () => {
           if (playSound) soundNotifier.error();
           return messages.error;
         },

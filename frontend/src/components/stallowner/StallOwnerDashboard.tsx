@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef } from 'react';
 import { ordersAPI } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import notify from '../../utils/notifications';
@@ -38,7 +37,6 @@ interface Order {
 }
 
 const StallOwnerDashboard: React.FC = () => {
-  const navigate = useNavigate();
   const { user, logout } = useAuth();
 
   const [orders, setOrders] = useState<Order[]>([]);
@@ -107,7 +105,7 @@ const StallOwnerDashboard: React.FC = () => {
       const response = await ordersAPI.getStallOrders();
       setOrders(response.data);
       setError('');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Failed to fetch orders:', err);
       if (!silent) {
         setError('Failed to load orders. Please try again.');
@@ -121,12 +119,13 @@ const StallOwnerDashboard: React.FC = () => {
   const handleConfirmPayment = async (orderId: number) => {
     setActionLoading(true);
     try {
-      await ordersAPI.confirmPayment(orderId, { payment_reference: `PAY-${Date.now()}` });
+      await ordersAPI.confirmPayment(orderId);
       await fetchOrders();
       setSelectedOrder(null);
       notify.success('Payment confirmed successfully!');
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.detail || 'Failed to confirm payment';
+    } catch (err) {
+      const apiErr = err as { response?: { data?: { detail?: string } } };
+      const errorMsg = apiErr.response?.data?.detail || 'Failed to confirm payment';
       notify.error(errorMsg);
     } finally {
       setActionLoading(false);
@@ -146,8 +145,9 @@ const StallOwnerDashboard: React.FC = () => {
         'CANCELLED': 'Order cancelled',
       };
       notify.success(statusMessages[newStatus] || 'Status updated successfully!');
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.detail || 'Failed to update status';
+    } catch (err) {
+      const apiErr = err as { response?: { data?: { detail?: string } } };
+      const errorMsg = apiErr.response?.data?.detail || 'Failed to update status';
       notify.error(errorMsg);
     } finally {
       setActionLoading(false);
@@ -161,37 +161,13 @@ const StallOwnerDashboard: React.FC = () => {
       await fetchOrders();
       setSelectedOrder(null);
       notify.success('Order completed successfully!');
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.detail || 'Failed to complete order';
+    } catch (err) {
+      const apiErr = err as { response?: { data?: { detail?: string } } };
+      const errorMsg = apiErr.response?.data?.detail || 'Failed to complete order';
       notify.error(errorMsg);
     } finally {
       setActionLoading(false);
     }
-  };
-
-  const formatTime = (dateString: string): string => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
-  const formatPickupWindow = (start: string, end: string): string => {
-    return `${formatTime(start)} - ${formatTime(end)}`;
-  };
-
-  const getTimeAgo = (dateString: string): string => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    const hours = Math.floor(diffMins / 60);
-    return `${hours}h ago`;
   };
 
   const filterOrdersByStatus = (status: OrderStatus | 'PENDING_PAYMENT'): Order[] => {

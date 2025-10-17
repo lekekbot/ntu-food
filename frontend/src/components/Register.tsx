@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
@@ -56,7 +56,8 @@ const Register = () => {
     setLoading(true);
     setError('');
 
-    const { confirmPassword, ...registrationData } = formData;
+    const registrationData = { ...formData };
+    delete registrationData.confirmPassword;
     const result = await register(registrationData);
 
     if (result.success) {
@@ -173,7 +174,7 @@ const Register = () => {
                   onChange={handleChange}
                   placeholder="Enter a secure password (6+ characters)"
                   required
-                  minLength="6"
+                  minLength={6}
                 />
               </div>
 
