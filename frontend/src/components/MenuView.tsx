@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { menuAPI, stallsAPI } from '../services/api';
+import { useCart } from '../context/CartContext';
 import './MenuView.css';
 
 const MenuView = () => {
   const { stallId } = useParams();
   const navigate = useNavigate();
+  const { cart, cartTotal, addToCart, updateQuantity, updateSpecialRequests } = useCart();
 
   const [stall, setStall] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
-  const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -35,55 +36,36 @@ const MenuView = () => {
     }
   };
 
-  const addToCart = (menuItem) => {
-    const existingItem = cart.find(item => item.menu_item_id === menuItem.id);
-
-    if (existingItem) {
-      setCart(cart.map(item =>
-        item.menu_item_id === menuItem.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      ));
-    } else {
-      setCart([...cart, {
-        menu_item_id: menuItem.id,
-        name: menuItem.name,
-        price: menuItem.price,
-        quantity: 1,
-        special_requests: ''
-      }]);
-    }
+  const handleAddToCart = (menuItem) => {
+    addToCart({
+      menu_item_id: menuItem.id,
+      name: menuItem.name,
+      price: menuItem.price,
+      quantity: 1,
+      stall_id: parseInt(stallId),
+      stall_name: stall?.name || ''
+    });
   };
 
-  const removeFromCart = (menuItemId) => {
+  const handleRemoveFromCart = (menuItemId) => {
     const existingItem = cart.find(item => item.menu_item_id === menuItemId);
 
-    if (existingItem && existingItem.quantity > 1) {
-      setCart(cart.map(item =>
-        item.menu_item_id === menuItemId
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      ));
-    } else {
-      setCart(cart.filter(item => item.menu_item_id !== menuItemId));
+    if (existingItem) {
+      if (existingItem.quantity > 1) {
+        updateQuantity(menuItemId, existingItem.quantity - 1);
+      } else {
+        updateQuantity(menuItemId, 0); // This will remove the item
+      }
     }
   };
 
-  const updateSpecialRequests = (menuItemId, requests) => {
-    setCart(cart.map(item =>
-      item.menu_item_id === menuItemId
-        ? { ...item, special_requests: requests }
-        : item
-    ));
+  const handleUpdateSpecialRequests = (menuItemId, requests) => {
+    updateSpecialRequests(menuItemId, requests);
   };
 
   const getCartItemQuantity = (menuItemId) => {
     const item = cart.find(item => item.menu_item_id === menuItemId);
     return item ? item.quantity : 0;
-  };
-
-  const getTotalAmount = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
   const handlePlaceOrder = () => {
@@ -96,7 +78,7 @@ const MenuView = () => {
       state: {
         stall,
         cart,
-        totalAmount: getTotalAmount()
+        totalAmount: cartTotal
       }
     });
   };
@@ -172,7 +154,7 @@ const MenuView = () => {
                     <div className="item-actions">
                       <div className="quantity-controls">
                         <button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => handleRemoveFromCart(item.id)}
                           disabled={getCartItemQuantity(item.id) === 0}
                           className="quantity-btn minus"
                         >
@@ -180,7 +162,7 @@ const MenuView = () => {
                         </button>
                         <span className="quantity">{getCartItemQuantity(item.id)}</span>
                         <button
-                          onClick={() => addToCart(item)}
+                          onClick={() => handleAddToCart(item)}
                           className="quantity-btn plus"
                         >
                           +
@@ -194,7 +176,7 @@ const MenuView = () => {
                           type="text"
                           placeholder="Special requests (optional)"
                           value={cart.find(cartItem => cartItem.menu_item_id === item.id)?.special_requests || ''}
-                          onChange={(e) => updateSpecialRequests(item.id, e.target.value)}
+                          onChange={(e) => handleUpdateSpecialRequests(item.id, e.target.value)}
                           className="requests-input"
                         />
                       </div>
@@ -222,7 +204,7 @@ const MenuView = () => {
               ))}
             </div>
             <div className="cart-total">
-              <strong>Total: ${getTotalAmount().toFixed(2)}</strong>
+              <strong>Total: ${cartTotal.toFixed(2)}</strong>
             </div>
             <button onClick={handlePlaceOrder} className="place-order-button">
               Place Order
