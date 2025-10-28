@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     # Frontend
     FRONTEND_URL: str = "http://localhost:3000"
 
+    # CORS Configuration (comma-separated list of allowed origins)
+    CORS_ORIGINS: str = "http://localhost:3000,http://localhost:5173,http://localhost:5174"
+
+    # Environment
+    ENVIRONMENT: str = "development"  # development, staging, production
+
     # Email Configuration
     EMAIL_TESTING_MODE: bool = True  # Set to False to send real emails
     USE_SUPABASE_EMAIL: bool = True  # Set to True to use Supabase Auth for email sending

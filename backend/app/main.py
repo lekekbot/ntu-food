@@ -1,10 +1,22 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 from contextlib import asynccontextmanager
 import uvicorn
+import logging
+import traceback
 
 from app.database.database import Base, engine
 from app.routes import auth, auth_otp, stalls, orders, menu, queue, users, admin
+from app.config import settings
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO if settings.ENVIRONMENT == "production" else logging.DEBUG,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -12,7 +24,9 @@ async def lifespan(app: FastAPI):
     from app.models import user, stall, menu, order, queue, otp
     # Create tables
     Base.metadata.create_all(bind=engine)
+    logger.info(f"NTU Food API started in {settings.ENVIRONMENT} mode")
     yield
+    logger.info("NTU Food API shutting down")
 
 app = FastAPI(
     title="NTU Food API",
@@ -21,13 +35,53 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+# Parse CORS origins from environment variable
+cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",")]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://localhost:5174", "https://ntu-food.vercel.app","ntu-food-ofqlojur8-lekekbots-projects.vercel.app"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Global exception handlers
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Handle all uncaught exceptions"""
+    logger.error(f"Unhandled exception: {str(exc)}\n{traceback.format_exc()}")
+
+    # Don't expose internal errors in production
+    if settings.ENVIRONMENT == "production":
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "detail": "An internal server error occurred. Please try again later.",
+                "type": "internal_server_error"
+            }
+        )
+    else:
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "detail": str(exc),
+                "type": type(exc).__name__,
+                "traceback": traceback.format_exc()
+            }
+        )
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Handle validation errors"""
+    logger.warning(f"Validation error: {exc.errors()}")
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={
+            "detail": exc.errors(),
+            "type": "validation_error"
+        }
+    )
 
 @app.get("/")
 async def root():

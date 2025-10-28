@@ -1,0 +1,69 @@
+services:
+  # Backend API Service
+  - type: web
+    name: ntu-food-backend
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      # Security
+      - key: SECRET_KEY
+        generateValue: true
+
+      - key: ALGORITHM
+        value: HS256
+
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: 30
+
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: 7
+
+      # Database - Use Supabase PostgreSQL
+      - key: DATABASE_URL
+        sync: false  # Set manually in Render dashboard
+
+      # Supabase Configuration (optional)
+      - key: SUPABASE_URL
+        sync: false  # Set manually if using Supabase Auth
+
+      - key: SUPABASE_KEY
+        sync: false  # Set manually if using Supabase Auth
+
+      # Environment
+      - key: ENVIRONMENT
+        value: production
+
+      # CORS - Will be updated with Vercel URL after frontend deployment
+      - key: CORS_ORIGINS
+        value: http://localhost:5173
+
+      - key: FRONTEND_URL
+        sync: false  # Set to Vercel URL after deployment
+
+      # Email Configuration
+      - key: EMAIL_TESTING_MODE
+        value: false
+
+      - key: USE_SUPABASE_EMAIL
+        value: false
+
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+
+      - key: SMTP_PORT
+        value: 587
+
+      - key: SMTP_EMAIL
+        sync: false  # Set manually
+
+      - key: SMTP_PASSWORD
+        sync: false  # Set manually - Gmail App Password
+
+      - key: SMTP_FROM_NAME
+        value: NTU Food
+
+      - key: APP_URL
+        sync: false  # Set to Vercel URL after deployment
